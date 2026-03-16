@@ -1,0 +1,20 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" fill="#0D0221"/>
+  <!-- Brick Shape -->
+  <rect x="106" y="156" width="300" height="200" rx="10" fill="#1A0B2E" stroke="#FF00FF" stroke-width="8"/>
+  <!-- Inner Glow -->
+  <rect x="114" y="164" width="284" height="184" rx="6" stroke="#FF00FF" stroke-opacity="0.3" stroke-width="4"/>
+  <!-- Letter T -->
+  <path d="M206 216H306M256 216V306" stroke="#00FFFF" stroke-width="20" stroke-linecap="round" stroke-linejoin="round">
+    <animate attributeName="stroke-opacity" values="0.8;1;0.8" dur="2s" repeatCount="indefinite" />
+  </path>
+  <!-- Glow Effect for T -->
+  <path d="M206 216H306M256 216V306" stroke="#00FFFF" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" opacity="0.3" filter="url(#glow)"/>
+  
+  <defs>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="10" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+</svg>
