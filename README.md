@@ -1,4 +1,4 @@
-# 🌃 Tegel-Gems: The Ultimate Synthwave Booking App
+# 🌃 Tegel-Gem: The Ultimate Synthwave Booking App
 
 A visually stunning, high-performance event booking application designed for authenticated users. Featuring a retro-futuristic **neon synthwave aesthetic**, smooth animations, and a custom-built calendar system.
 
@@ -35,7 +35,7 @@ A visually stunning, high-performance event booking application designed for aut
 1. Clone the repository:
    ```bash
    git clone <repository-url>
-   cd tegel-gems
+   cd tegel-gem
    ```
 
 2. Install dependencies:
