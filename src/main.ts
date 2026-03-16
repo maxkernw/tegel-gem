@@ -163,7 +163,6 @@ function renderAuth() {
             <input type="password" id="password" placeholder="Password" />
             <button id="login-btn">Login</button>
         </div>
-        <div class="ad-space"></div>
     `;
     updateAds();
 
@@ -422,12 +421,14 @@ function renderCalendar() {
     const monthView = generateMonthView(currentYear, currentMonth, allEvents);
 
     const todayObj = new Date();
+    const isCurrentMonth = currentYear === todayObj.getFullYear() && currentMonth === todayObj.getMonth();
     const todayStr = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`;
 
     appDiv.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <h1 style="margin: 0; flex: 1; text-align: left;">Tegel</h1>
             <div style="display: flex; gap: 10px;">
+                ${!isCurrentMonth ? `<button id="go-today-btn" class="small-btn-neon" style="border-color: #9d00ff; color: #9d00ff; box-shadow: 0 0 5px #9d00ff;">Current Month</button>` : ''}
                 <button id="my-bookings-btn" style="padding: 8px 15px; font-size: 0.8rem; border-color: #00ffff; color: #00ffff; box-shadow: 0 0 5px #00ffff;">My Bookings</button>
                 <button id="logout-btn" style="padding: 8px 15px; font-size: 0.8rem;">Logout</button>
             </div>
@@ -465,8 +466,6 @@ function renderCalendar() {
                 </div>
             `).join('')}
         </div>
-
-        <div class="ad-space"></div>
     `;
     updateAds();
 
@@ -490,6 +489,13 @@ function renderCalendar() {
 
     document.getElementById('my-bookings-btn')?.addEventListener('click', () => {
         showMyBookingsModal(allEvents);
+    });
+
+    document.getElementById('go-today-btn')?.addEventListener('click', () => {
+        const now = new Date();
+        currentYear = now.getFullYear();
+        currentMonth = now.getMonth();
+        renderCalendar();
     });
 
     document.getElementById('prev-month')?.addEventListener('click', () => {
