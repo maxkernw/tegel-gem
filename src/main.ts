@@ -14,6 +14,14 @@ const toastContainer = document.createElement('div');
 toastContainer.className = 'toast-container';
 document.body.appendChild(toastContainer);
 
+function hideSplashScreen() {
+    const splash = document.getElementById('splash-screen');
+    if (splash) {
+        splash.classList.add('fade-out');
+        setTimeout(() => splash.remove(), 1000);
+    }
+}
+
 // State
 let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth();
@@ -172,7 +180,7 @@ function renderAuth() {
         });
     });
 
-    document.getElementById('login-btn')?.addEventListener('click', async () => {
+    const handleLogin = async () => {
         const email = (document.getElementById('email') as HTMLInputElement).value;
         const password = (document.getElementById('password') as HTMLInputElement).value;
         try {
@@ -181,6 +189,15 @@ function renderAuth() {
         } catch (e: any) {
             showToast(e.message, 'error');
         }
+    };
+
+    document.getElementById('login-btn')?.addEventListener('click', handleLogin);
+
+    document.getElementById('password')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleLogin();
+    });
+    document.getElementById('email')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleLogin();
     });
 }
 
@@ -221,13 +238,16 @@ function showBookingModal(dateStr: string, events: Event[]) {
 
     const modal = document.createElement('div');
     modal.className = 'modal-overlay active';
+    const user = auth.currentUser;
+    const defaultTitle = user?.email || '';
+
     modal.innerHTML = `
         <div class="modal-content">
             <h2>Book Event</h2>
             <p style="text-align: center; color: #9d00ff;">Date: ${dateStr}</p>
             <div class="form-group">
                 <label>Title</label>
-                <input type="text" id="event-title" placeholder="Synth Party" />
+                <input type="text" id="event-title" placeholder="Synth Party" value="${defaultTitle}" />
             </div>
             <div class="form-group">
                 <label>Start Time</label>
@@ -250,7 +270,7 @@ function showBookingModal(dateStr: string, events: Event[]) {
         setTimeout(() => modal.remove(), 300);
     });
 
-    document.getElementById('confirm-booking')?.addEventListener('click', async () => {
+    const handleBooking = async () => {
         const title = (document.getElementById('event-title') as HTMLInputElement).value;
         const startTimeStr = (document.getElementById('event-start') as HTMLInputElement).value;
         const endTimeStr = (document.getElementById('event-end') as HTMLInputElement).value;
@@ -291,6 +311,14 @@ function showBookingModal(dateStr: string, events: Event[]) {
                 showToast(e.message, 'error');
             }
         }
+    };
+
+    document.getElementById('confirm-booking')?.addEventListener('click', handleBooking);
+
+    ['event-title', 'event-start', 'event-end'].forEach(id => {
+        document.getElementById(id)?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleBooking();
+        });
     });
 }
 
@@ -439,13 +467,22 @@ function renderCalendar() {
     }
 }
 
+let initialLoad = true;
 onAuthStateChanged(auth, (user) => {
     if (user) {
         subscribeToEvents((events) => {
             allEvents = events;
             renderCalendar();
+            if (initialLoad) {
+                hideSplashScreen();
+                initialLoad = false;
+            }
         });
     } else {
         renderAuth();
+        if (initialLoad) {
+            hideSplashScreen();
+            initialLoad = false;
+        }
     }
 });

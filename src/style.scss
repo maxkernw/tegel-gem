@@ -37,8 +37,8 @@ body {
   z-index: 10;
   width: 100%;
   max-width: 1200px;
-  background: rgba($surface-color, 0.9); /* Slightly more transparent to see the sun */
-  backdrop-filter: blur(20px); /* Stronger blur for glass effect */
+  background: rgba($surface-color, 0.7);
+  backdrop-filter: blur(10px);
   border: 2px solid $neon-cyan;
   box-shadow:
     0 0 20px $neon-cyan,
@@ -54,6 +54,79 @@ body {
     margin: auto;
     max-height: none;
   }
+}
+
+/* Splash Screen */
+#splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: $bg-color; /* Solid background until canvas takes over */
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.8s ease-out, visibility 0.8s;
+
+  &.fade-out {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .splash-content {
+    text-align: center;
+    width: 300px;
+  }
+
+  .splash-logo {
+    font-size: 4rem;
+    font-weight: 900;
+    color: $neon-cyan;
+    text-shadow: 0 0 10px $neon-cyan, 0 0 20px $neon-purple;
+    letter-spacing: 10px;
+    margin-bottom: 30px;
+    animation: pulse-glow 2s infinite alternate;
+  }
+
+  .loading-bar-container {
+    width: 100%;
+    height: 4px;
+    background: rgba($neon-purple, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 10px rgba($neon-purple, 0.3);
+  }
+
+  .loading-bar {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, $neon-pink, transparent);
+    animation: loading-slide 1.5s infinite linear;
+  }
+
+  .loading-text {
+    margin-top: 15px;
+    font-size: 0.7rem;
+    color: $neon-purple;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+}
+
+@keyframes pulse-glow {
+  from { text-shadow: 0 0 10px $neon-cyan, 0 0 20px $neon-purple; transform: scale(1); }
+  to { text-shadow: 0 0 20px $neon-cyan, 0 0 40px $neon-pink; transform: scale(1.05); }
+}
+
+@keyframes loading-slide {
+  from { left: -100%; }
+  to { left: 100%; }
 }
 
 h1 {
