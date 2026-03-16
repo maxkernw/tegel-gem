@@ -7,6 +7,11 @@ $text-color: #ffffff;
 
 * {
   box-sizing: border-box;
+  user-select: none; /* Disable text selection globally */
+}
+
+input, textarea, [contenteditable="true"] {
+  user-select: text; /* Re-enable for inputs */
 }
 
 body {
@@ -201,7 +206,7 @@ h1 {
 
   .calendar-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 8px;
   }
 
@@ -222,6 +227,41 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  max-height: 120px; /* Limit height of event list in day cell */
+  overflow-y: auto;
+  padding-right: 2px;
+
+  /* Custom Neon Scrollbar */
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: rgba($neon-purple, 0.1);
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $neon-purple;
+    border-radius: 2px;
+    &:hover {
+      background: $neon-pink;
+    }
+  }
+}
+
+/* Global scrollbar for modal/app */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: $bg-color;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba($neon-cyan, 0.3);
+  border-radius: 4px;
+  border: 1px solid rgba($neon-cyan, 0.5);
+  &:hover {
+    background: rgba($neon-cyan, 0.6);
+    box-shadow: 0 0 10px $neon-cyan;
+  }
 }
 
 .event {
@@ -820,7 +860,7 @@ button {
 }
 
 @media (min-width: 480px) {
-  .modal-actions {
+  .modal-content .modal-actions {
     flex-direction: row;
     .cancel-btn {
       order: initial;
@@ -828,7 +868,118 @@ button {
   }
 }
 
-/* Toast Styles */
+/* My Bookings List Styles */
+.my-bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Increased gap between sections */
+  margin-bottom: 10px;
+}
+
+.booking-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.section-title {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0;
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba($text-color, 0.1);
+  
+  &.upcoming {
+    color: $neon-cyan;
+    text-shadow: 0 0 5px $neon-cyan;
+  }
+  
+  &.past {
+    color: $neon-purple;
+    opacity: 0.7;
+  }
+}
+
+.small-btn-neon {
+  background: transparent;
+  border: 1px solid $neon-pink;
+  color: $neon-pink;
+  font-size: 0.65rem;
+  padding: 4px 8px;
+  text-transform: uppercase;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 0 5px $neon-pink;
+  
+  &:hover {
+    background: $neon-pink;
+    color: white;
+    box-shadow: 0 0 15px $neon-pink;
+  }
+}
+
+.my-booking-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 4px solid;
+  padding: 10px 15px;
+  border-radius: 4px;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Style for items in the past section */
+  .booking-section:has(.past) & {
+    opacity: 0.6;
+    filter: grayscale(0.5);
+    &:hover {
+      opacity: 1;
+      filter: grayscale(0);
+    }
+  }
+
+  .my-booking-info {
+    flex: 1;
+  }
+
+  .my-booking-title {
+    font-weight: bold;
+    color: $neon-cyan;
+    font-size: 1rem;
+    margin-bottom: 2px;
+  }
+
+  .my-booking-time {
+    font-size: 0.8rem;
+    color: rgba($text-color, 0.7);
+  }
+
+  .delete-my-booking {
+    background: transparent;
+    border: none;
+    color: $neon-purple;
+    font-size: 1.5rem;
+    padding: 0 5px;
+    cursor: pointer;
+    box-shadow: none !important;
+    transition: all 0.2s;
+    &:hover {
+      color: $neon-pink;
+      background: transparent;
+      box-shadow: none;
+      text-shadow: 0 0 5px $neon-pink;
+      transform: scale(1.2);
+    }
+  }
+}
+
+    /* Toast Styles */
 .toast-container {
   position: fixed;
   bottom: 10px;

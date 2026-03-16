@@ -1,6 +1,6 @@
 import './style.scss';
 import { registerSW } from 'virtual:pwa-register';
-import { auth, subscribeToEvents, addEvent, deleteEvent } from './firebase';
+import { auth, subscribeToEvents, addEvent, deleteEvent, deleteMultipleEvents } from './firebase';
 import { initSynthBackground } from './synth-background';
 
 initSynthBackground();
@@ -322,6 +322,100 @@ function showBookingModal(dateStr: string, events: Event[]) {
     });
 }
 
+function showMyBookingsModal(events: Event[]) {
+    const now = Date.now();
+    const userEvents = events.filter(e => e.userId === auth.currentUser?.uid);
+    const upcomingEvents = userEvents.filter(e => e.end >= now).sort((a, b) => a.start - b.start);
+    const pastEvents = userEvents.filter(e => e.end < now).sort((a, b) => b.start - a.start);
+
+    const existingModal = document.querySelector('.modal-overlay');
+    if (existingModal) existingModal.remove();
+
+    const renderEventItem = (ev: Event) => {
+        const dateStr = new Date(ev.start).toLocaleDateString();
+        const startStr = new Date(ev.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const endStr = new Date(ev.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return `
+            <div class="my-booking-item" style="border-left-color: ${ev.color}">
+                <div class="my-booking-info">
+                    <div class="my-booking-title">${ev.title}</div>
+                    <div class="my-booking-time">${dateStr} | ${startStr} - ${endStr}</div>
+                </div>
+                <button class="delete-my-booking" data-id="${ev.id}">&times;</button>
+            </div>
+        `;
+    };
+
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay active';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-height: 85vh; display: flex; flex-direction: column;">
+            <h2>My Bookings</h2>
+            <div class="my-bookings-list" style="overflow-y: auto; flex: 1; padding-right: 5px;">
+                ${userEvents.length === 0 ? '<p style="text-align: center; color: #ff00ff;">No bookings found.</p>' : ''}
+                
+                ${upcomingEvents.length > 0 ? `
+                    <div class="booking-section">
+                        <h3 class="section-title upcoming">Upcoming</h3>
+                        ${upcomingEvents.map(renderEventItem).join('')}
+                    </div>
+                ` : ''}
+
+                ${pastEvents.length > 0 ? `
+                    <div class="booking-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <h3 class="section-title past">Past</h3>
+                            <button id="delete-all-past" class="small-btn-neon">Delete All Past</button>
+                        </div>
+                        ${pastEvents.map(renderEventItem).join('')}
+                    </div>
+                ` : ''}
+            </div>
+            <div class="modal-actions">
+                <button id="close-my-bookings">Close</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    document.getElementById('delete-all-past')?.addEventListener('click', () => {
+        const pastIds = pastEvents.map(e => e.id).filter((id): id is string => !!id);
+        if (pastIds.length > 0) {
+            showConfirmModal(`Delete all ${pastIds.length} past bookings?`, async () => {
+                try {
+                    await deleteMultipleEvents(pastIds);
+                    showToast("Past bookings cleared");
+                    modal.remove();
+                } catch (err: any) {
+                    showToast(err.message, 'error');
+                }
+            });
+        }
+    });
+
+    document.getElementById('close-my-bookings')?.addEventListener('click', () => {
+        modal.classList.remove('active');
+        setTimeout(() => modal.remove(), 300);
+    });
+
+    document.querySelectorAll('.delete-my-booking').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const eventId = btn.getAttribute('data-id');
+            if (eventId) {
+                showConfirmModal("Delete this booking?", async () => {
+                    try {
+                        await deleteEvent(eventId);
+                        showToast("Booking deleted");
+                        modal.remove(); // Close modal to refresh
+                    } catch (err: any) {
+                        showToast(err.message, 'error');
+                    }
+                });
+            }
+        });
+    });
+}
+
 function renderCalendar() {
     appDiv.classList.remove('auth-mode');
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -333,7 +427,10 @@ function renderCalendar() {
     appDiv.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <h1 style="margin: 0; flex: 1; text-align: left;">Tegel</h1>
-            <button id="logout-btn" style="padding: 8px 15px; font-size: 0.8rem;">Logout</button>
+            <div style="display: flex; gap: 10px;">
+                <button id="my-bookings-btn" style="padding: 8px 15px; font-size: 0.8rem; border-color: #00ffff; color: #00ffff; box-shadow: 0 0 5px #00ffff;">My Bookings</button>
+                <button id="logout-btn" style="padding: 8px 15px; font-size: 0.8rem;">Logout</button>
+            </div>
         </div>
         
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
@@ -389,6 +486,10 @@ function renderCalendar() {
     document.getElementById('logout-btn')?.addEventListener('click', () => {
         signOut(auth);
         showToast("Logged out");
+    });
+
+    document.getElementById('my-bookings-btn')?.addEventListener('click', () => {
+        showMyBookingsModal(allEvents);
     });
 
     document.getElementById('prev-month')?.addEventListener('click', () => {
@@ -468,6 +569,16 @@ function renderCalendar() {
 }
 
 let initialLoad = true;
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const modal = document.querySelector('.modal-overlay.active');
+        if (modal) {
+            modal.classList.remove('active');
+            setTimeout(() => modal.remove(), 300);
+        }
+    }
+});
+
 onAuthStateChanged(auth, (user) => {
     if (user) {
         subscribeToEvents((events) => {

@@ -48,3 +48,8 @@ export async function deleteEvent(eventId: string) {
   const eventRef = ref(db, `events/${eventId}`);
   return set(eventRef, null);
 }
+
+export async function deleteMultipleEvents(eventIds: string[]) {
+  const promises = eventIds.map(id => deleteEvent(id));
+  return Promise.all(promises);
+}
