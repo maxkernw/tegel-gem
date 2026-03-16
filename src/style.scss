@@ -16,27 +16,43 @@ body {
   margin: 0;
   display: flex;
   justify-content: center;
-  align-items: center; /* Changed from flex-start to center */
+  align-items: center;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow: hidden;
   padding: 10px;
+  position: relative;
+}
+
+#synth-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
 }
 
 #app {
+  position: relative;
+  z-index: 10;
   width: 100%;
   max-width: 1200px;
-  background: $surface-color;
+  background: rgba($surface-color, 0.9); /* Slightly more transparent to see the sun */
+  backdrop-filter: blur(20px); /* Stronger blur for glass effect */
   border: 2px solid $neon-cyan;
   box-shadow:
-    0 0 15px $neon-cyan,
-    inset 0 0 5px $neon-cyan;
+    0 0 20px $neon-cyan,
+    inset 0 0 10px $neon-cyan;
   padding: 15px;
   border-radius: 8px;
-  margin: 20px 0; /* Updated from margin-top: 20px */
+  margin: 20px 0;
+  max-height: 90vh;
+  overflow-y: auto;
 
   &.auth-mode {
     max-width: 500px;
     margin: auto;
+    max-height: none;
   }
 }
 

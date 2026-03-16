@@ -1,7 +1,9 @@
 import './style.scss';
 import { registerSW } from 'virtual:pwa-register';
 import { auth, subscribeToEvents, addEvent, deleteEvent } from './firebase';
+import { initSynthBackground } from './synth-background';
 
+initSynthBackground();
 registerSW({ immediate: true });
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { generateMonthView, isOverlap } from './calendar';
