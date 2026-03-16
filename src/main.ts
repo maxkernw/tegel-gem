@@ -1,5 +1,8 @@
 import './style.scss';
+import { registerSW } from 'virtual:pwa-register';
 import { auth, subscribeToEvents, addEvent, deleteEvent } from './firebase';
+
+registerSW({ immediate: true });
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { generateMonthView, isOverlap } from './calendar';
 import { Event } from './types';
@@ -142,6 +145,7 @@ function showToast(message: string, type: 'info' | 'error' = 'info') {
 }
 
 function renderAuth() {
+    appDiv.classList.add('auth-mode');
     appDiv.innerHTML = `
         <h1>Tegel - Einloggen</h1>
         <div class="auth-form">
@@ -289,6 +293,7 @@ function showBookingModal(dateStr: string, events: Event[]) {
 }
 
 function renderCalendar() {
+    appDiv.classList.remove('auth-mode');
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const monthView = generateMonthView(currentYear, currentMonth, allEvents);
 
