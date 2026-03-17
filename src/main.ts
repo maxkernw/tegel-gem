@@ -323,7 +323,7 @@ function showBookingModal(dateStr: string, events: Event[]) {
 
 function showMyBookingsModal(events: Event[]) {
     const now = Date.now();
-    const userEvents = events.filter(e => e.userId === auth.currentUser?.uid);
+    const userEvents = events.filter(e => e.email === auth.currentUser?.email);
     const upcomingEvents = userEvents.filter(e => e.end >= now).sort((a, b) => a.start - b.start);
     const pastEvents = userEvents.filter(e => e.end < now).sort((a, b) => b.start - a.start);
 
@@ -448,7 +448,7 @@ function renderCalendar() {
                     <div class="day-number">${day.dayOfMonth}</div>
                     <div class="event-list">
                         ${day.events.map(ev => {
-        const isMine = ev.userId === auth.currentUser?.uid;
+        const isMine = ev.email === auth.currentUser?.email;
         const startStr = new Date(ev.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const endStr = new Date(ev.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         return `
