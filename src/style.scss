@@ -1302,3 +1302,64 @@ button {
     opacity: 0;
   }
 }
+
+/* Chalkboard Styles */
+.chalkboard-container {
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+    width: 100%;
+    background: #000;
+    border: 2px solid $neon-pink;
+    box-shadow: 0 0 15px rgba($neon-pink, 0.3);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+.chalkboard-controls {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    background: rgba($surface-color, 0.9);
+    border-bottom: 1px solid $neon-pink;
+    align-items: center;
+    flex-wrap: wrap;
+
+    input[type="color"] {
+        background: transparent;
+        border: 1px solid $neon-cyan;
+        cursor: pointer;
+        height: 30px;
+        width: 50px;
+    }
+
+    input[type="range"] {
+        accent-color: $neon-cyan;
+    }
+}
+
+#chalkboard-canvas {
+    flex: 1;
+    cursor: crosshair;
+    background: #0d0221;
+    touch-action: none;
+}
+
+.small-btn-neon {
+    background: transparent;
+    border: 1px solid $neon-cyan;
+    color: $neon-cyan;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    box-shadow: 0 0 5px rgba($neon-cyan, 0.3);
+
+    &:hover {
+        background: rgba($neon-cyan, 0.1);
+        box-shadow: 0 0-10px rgba($neon-cyan, 0.5);
+    }
+}

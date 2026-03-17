@@ -26,6 +26,7 @@ setInterval(() => {
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { generateMonthView, isOverlap } from './calendar';
 import { Event } from './types';
+import { Chalkboard } from './chalkboard';
 
 const appDiv = document.querySelector<HTMLDivElement>('#app')!;
 const toastContainer = document.createElement('div');
@@ -259,7 +260,7 @@ function renderAuth() {
     });
 }
 
-function showConfirmModal(message: string, onConfirm: () => void) {
+export function showConfirmModal(message: string, onConfirm: () => void) {
     const existingModal = document.querySelector('.modal-overlay');
     if (existingModal) existingModal.remove();
 
@@ -487,6 +488,7 @@ function renderCalendar() {
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <h1 style="margin: 0; flex: 1; text-align: left;">Tegel</h1>
             <div style="display: flex; gap: 10px;">
+                <button id="chalkboard-btn" class="small-btn-neon" style="border-color: #ff00ff; color: #ff00ff; box-shadow: 0 0 5px #ff00ff;">Anslagstavla</button>
                 ${!isCurrentMonth ? `<button id="go-today-btn" class="small-btn-neon" style="border-color: #9d00ff; color: #9d00ff; box-shadow: 0 0 5px #9d00ff;">Current Month</button>` : ''}
                 <button id="my-bookings-btn" style="padding: 8px 15px; font-size: 0.8rem; border-color: #00ffff; color: #00ffff; box-shadow: 0 0 5px #00ffff;">My Bookings</button>
                 <button id="logout-btn" style="padding: 8px 15px; font-size: 0.8rem;">Logout</button>
@@ -544,6 +546,13 @@ function renderCalendar() {
     document.getElementById('logout-btn')?.addEventListener('click', () => {
         signOut(auth);
         showToast("Logged out");
+    });
+
+    document.getElementById('chalkboard-btn')?.addEventListener('click', () => {
+        new Chalkboard(appDiv);
+        document.getElementById('back-to-calendar')?.addEventListener('click', () => {
+            renderCalendar();
+        });
     });
 
     document.getElementById('my-bookings-btn')?.addEventListener('click', () => {

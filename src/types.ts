@@ -8,6 +8,19 @@ export interface Event {
   email: string;
 }
 
+export interface ChalkPoint {
+  x: number;
+  y: number;
+}
+
+export interface ChalkLine {
+  id: string;
+  userId: string;
+  color: string;
+  width: number;
+  points: ChalkPoint[];
+}
+
 export interface Day {
   date: string; // ISO format or similar
   dayOfMonth: number;
