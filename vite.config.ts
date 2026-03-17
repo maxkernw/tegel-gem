@@ -6,6 +6,12 @@ export default defineConfig({
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true
+      },
       devOptions: {
         enabled: true
       },
@@ -55,7 +61,7 @@ export default defineConfig({
         protocol_handlers: [
           {
             protocol: 'web+tegel',
-            url: '/tegel-gem/?booking=%s'
+            url: '/?booking=%s'
           }
         ]
       }
@@ -65,3 +71,4 @@ export default defineConfig({
     outDir: 'dist',
   }
 })
+

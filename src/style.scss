@@ -197,6 +197,7 @@ h1 {
   }
 }
 
+
 /* Desktop Grid View */
 @media (min-width: 768px) {
   h1 {
@@ -578,6 +579,204 @@ button {
       color: #ffeb3b;
     }
   }
+  /* Variant 13: Vaporwave */
+&.style-vaporwave {
+  border: 2px solid #ff77ff;
+  background: linear-gradient(180deg, #ff9a9e, #fad0c4);
+  .ad-overlay {
+    background: linear-gradient(90deg, rgba(0,255,255,0.2), rgba(255,0,255,0.2));
+  }
+  .ad-content {
+    font-family: "Courier New", monospace;
+    color: #00ffff;
+    text-shadow: 2px 2px #ff00ff;
+    background: rgba(0, 0, 0, 0.4);
+    letter-spacing: 2px;
+  }
+  &::before {
+    background: #00ffff;
+    color: #000;
+  }
+}
+
+/* Variant 14: Brutalist */
+&.style-brutal {
+  border: 6px solid #000;
+  background: #fff;
+  .ad-overlay {
+    background: none;
+  }
+  .ad-content {
+    font-family: Arial, sans-serif;
+    color: #000;
+    background: #fff;
+    font-weight: 900;
+    font-size: 1.2rem;
+  }
+  &::before {
+    background: #000;
+    color: #fff;
+  }
+}
+
+/* Variant 15: Glassmorphism */
+&.style-glass {
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  .ad-overlay {
+    background: rgba(255,255,255,0.1);
+  }
+  .ad-content {
+    font-family: "Inter", sans-serif;
+    color: #fff;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+  }
+  &::before {
+    background: rgba(255,255,255,0.8);
+    color: #000;
+  }
+}
+
+/* Variant 16: Cyberpunk Grid */
+&.style-cybergrid {
+  border: 2px solid #0ff;
+  background: linear-gradient(#000 1px, transparent 1px),
+              linear-gradient(90deg, #000 1px, transparent 1px);
+  background-size: 40px 40px;
+  .ad-overlay {
+    background: rgba(0,0,0,0.6);
+  }
+  .ad-content {
+    font-family: monospace;
+    color: #0ff;
+    text-shadow: 0 0 5px #0ff;
+  }
+  &::before {
+    background: #0ff;
+    color: #000;
+  }
+}
+
+/* Variant 17: Newspaper */
+&.style-newspaper {
+  border: 2px solid #222;
+  background: #f4f1e8;
+  .ad-overlay {
+    background: rgba(0,0,0,0.05);
+  }
+  .ad-content {
+    font-family: "Times New Roman", serif;
+    color: #111;
+    column-count: 2;
+    background: rgba(255,255,255,0.7);
+  }
+  &::before {
+    background: #222;
+    color: #fff;
+  }
+}
+
+/* Variant 18: Kids/Playful */
+&.style-kids {
+  border: 4px dotted #ff69b4;
+  background: #87cefa;
+  .ad-overlay {
+    background: rgba(255,255,255,0.3);
+  }
+  .ad-content {
+    font-family: "Comic Sans MS", cursive;
+    color: #ff1493;
+    background: #fff;
+    border-radius: 12px;
+    transform: rotate(-2deg);
+  }
+  &::before {
+    background: #ff1493;
+    color: #fff;
+  }
+}
+
+/* Variant 19: Sci-Fi HUD */
+&.style-hud {
+  border: 2px solid #00ffaa;
+  background: #001a1a;
+  .ad-overlay {
+    background: rgba(0,255,170,0.1);
+  }
+  .ad-content {
+    font-family: monospace;
+    color: #00ffaa;
+    text-shadow: 0 0 8px #00ffaa;
+    letter-spacing: 1px;
+  }
+  &::before {
+    background: #00ffaa;
+    color: #001a1a;
+  }
+}
+
+/* Variant 20: Crumpled Paper */
+&.style-paper {
+  border: 1px solid #ccc;
+  background: #fffef8;
+  .ad-overlay {
+    background: url('https://www.transparenttextures.com/patterns/paper.png');
+    opacity: 0.4;
+  }
+  .ad-content {
+    font-family: "Courier New", monospace;
+    color: #333;
+    transform: rotate(1deg);
+  }
+  &::before {
+    background: #333;
+    color: #fff;
+  }
+}
+
+/* Variant 21: Liquid/Blob */
+&.style-liquid {
+  background: linear-gradient(135deg, #00f, #0ff);
+  .ad-overlay {
+    background: rgba(255,255,255,0.1);
+  }
+  .ad-content {
+    font-family: sans-serif;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
+  }
+  &::before {
+    background: #fff;
+    color: #000;
+  }
+}
+
+/* Variant 22: Warning Tape */
+&.style-warning {
+  border: 5px solid #000;
+  background: repeating-linear-gradient(
+    45deg,
+    #ffcc00,
+    #ffcc00 20px,
+    #000 20px,
+    #000 40px
+  );
+  .ad-overlay {
+    background: rgba(0,0,0,0.3);
+  }
+  .ad-content {
+    font-family: Impact, sans-serif;
+    color: #000;
+    background: #ffcc00;
+  }
+  &::before {
+    background: #000;
+    color: #ffcc00;
+  }
+}
 
   /* Variant 6: Glitch */
   &.style-glitch {
