@@ -2731,7 +2731,10 @@ FIREBASE: `))}restoreState_(){this.tryAuth(),this.tryAppCheck();for(const e of t
                     <div class="ad-overlay"></div>
                     <div class="ad-content">${r.text}</div>
                 `},l.onerror=()=>{i()}};i()})}setInterval(Ts,1e4);function x(n,e="info"){const t=document.createElement("div");t.className=`toast ${e}`,t.innerText=n,ws.appendChild(t),setTimeout(()=>{t.classList.add("fade-out"),setTimeout(()=>t.remove(),500)},3e3)}function Tm(){var e,t,i;St.classList.add("auth-mode"),St.innerHTML=`
-        <h1>Tegel - Einloggen</h1>
+        <div class="top-bar">
+            <h1>Tegel</h1>
+            <a href="https://games.tegelhus.uk" class="games-link" target="_blank">Games</a>
+        </div>
         <div class="auth-form">
             <input type="email" id="email" placeholder="Email" />
             <input type="password" id="password" placeholder="Password" />
@@ -2792,7 +2795,7 @@ FIREBASE: `))}restoreState_(){this.tryAuth(),this.tryAppCheck();for(const e of t
                     <div class="booking-section">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                             <h3 class="section-title past">Past</h3>
-                            <button id="delete-all-past" class="small-btn-neon">Delete All Past</button>
+                            <button id="delete-all-past" class="tiny-btn-neon">Delete All Past</button>
                         </div>
                         ${s.map(o).join("")}
                     </div>
@@ -2803,13 +2806,14 @@ FIREBASE: `))}restoreState_(){this.tryAuth(),this.tryAppCheck();for(const e of t
             </div>
         </div>
     `,document.body.appendChild(a),(c=document.getElementById("delete-all-past"))==null||c.addEventListener("click",()=>{const u=s.map(h=>h.id).filter(h=>!!h);u.length>0&&Cn(`Delete all ${u.length} past bookings?`,async()=>{try{await mm(u),x("Past bookings cleared"),a.remove()}catch(h){x(h.message,"error")}})}),(l=document.getElementById("close-my-bookings"))==null||l.addEventListener("click",()=>{a.classList.remove("active"),setTimeout(()=>a.remove(),300)}),document.querySelectorAll(".delete-my-booking").forEach(u=>{u.addEventListener("click",async()=>{const h=u.getAttribute("data-id");h&&Cn("Delete this booking?",async()=>{try{await Is(h),x("Booking deleted"),a.remove()}catch(d){x(d.message,"error")}})})})}function gt(){var o,a,c,l,u,h;St.classList.remove("auth-mode");const n=["January","February","March","April","May","June","July","August","September","October","November","December"],e=Em(Re,G,tn),t=new Date,i=Re===t.getFullYear()&&G===t.getMonth(),s=`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")}`;St.innerHTML=`
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-            <h1 style="margin: 0; flex: 1; text-align: left;">Tegel</h1>
-            <div style="display: flex; gap: 10px;">
-                <button id="chalkboard-btn" class="small-btn-neon" style="border-color: #ff00ff; color: #ff00ff; box-shadow: 0 0 5px #ff00ff;">Anslagstavla</button>
-                ${i?"":'<button id="go-today-btn" class="small-btn-neon" style="border-color: #9d00ff; color: #9d00ff; box-shadow: 0 0 5px #9d00ff;">Current Month</button>'}
-                <button id="my-bookings-btn" style="padding: 8px 15px; font-size: 0.8rem; border-color: #00ffff; color: #00ffff; box-shadow: 0 0 5px #00ffff;">My Bookings</button>
-                <button id="logout-btn" style="padding: 8px 15px; font-size: 0.8rem;">Logout</button>
+        <div class="top-bar">
+            <h1>Tegel</h1>
+            <div class="actions-bar">
+                <a href="https://games.tegelhus.uk" class="games-link" target="_blank">Games</a>
+                <button id="chalkboard-btn" class="small-btn-neon pink">Anslagstavla</button>
+                ${i?"":'<button id="go-today-btn" class="small-btn-neon purple">Current Month</button>'}
+                <button id="my-bookings-btn" class="small-btn-neon">My Bookings</button>
+                <button id="logout-btn" class="small-btn-neon" style="color: #fff; border-color: #fff; box-shadow: 0 0 5px #fff;">Logout</button>
             </div>
         </div>
         
