@@ -49,10 +49,15 @@ body {
     0 0 20px $neon-cyan,
     inset 0 0 10px $neon-cyan;
   padding: 15px;
+  padding-bottom: 120px; /* Space for the fixed ad at the bottom */
   border-radius: 8px;
   margin: 20px 0;
   max-height: 90vh;
   overflow-y: auto;
+
+  @media (min-width: 768px) {
+    padding-bottom: 25px; /* Reset or smaller padding on desktop if ad is positioned differently or less intrusive */
+  }
 
   &.auth-mode {
     max-width: 500px;
@@ -1124,7 +1129,7 @@ button {
   }
 }
 
-.small-btn-neon {
+.tiny-btn-neon {
   background: transparent;
   border: 1px solid $neon-pink;
   color: $neon-pink;
@@ -1347,19 +1352,126 @@ button {
 }
 
 .small-btn-neon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
     background: transparent;
     border: 1px solid $neon-cyan;
     color: $neon-cyan;
-    padding: 5px 12px;
+    padding: 0 15px;
     border-radius: 4px;
     font-size: 0.8rem;
     cursor: pointer;
     text-transform: uppercase;
+    font-weight: bold;
     transition: all 0.2s;
     box-shadow: 0 0 5px rgba($neon-cyan, 0.3);
+    box-sizing: border-box;
 
     &:hover {
         background: rgba($neon-cyan, 0.1);
-        box-shadow: 0 0-10px rgba($neon-cyan, 0.5);
+        box-shadow: 0 0 15px rgba($neon-cyan, 0.6);
+        transform: translateY(-2px);
+    }
+
+    &.pink {
+        border-color: $neon-pink;
+        color: $neon-pink;
+        box-shadow: 0 0 5px rgba($neon-pink, 0.3);
+        &:hover {
+            background: rgba($neon-pink, 0.1);
+            box-shadow: 0 0 15px rgba($neon-pink, 0.6);
+        }
+    }
+
+    &.purple {
+        border-color: $neon-purple;
+        color: $neon-purple;
+        box-shadow: 0 0 5px rgba($neon-purple, 0.3);
+        &:hover {
+            background: rgba($neon-purple, 0.1);
+            box-shadow: 0 0 15px rgba($neon-purple, 0.6);
+        }
+    }
+}
+
+.top-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    width: 100%;
+    border-bottom: 1px solid rgba($neon-cyan, 0.2);
+    padding-bottom: 15px;
+
+    h1 {
+        margin: 0;
+        text-align: center;
+    }
+
+    @media (min-width: 768px) {
+        flex-direction: row;
+        justify-content: space-between;
+        border-bottom: none;
+        padding-bottom: 0;
+
+        h1 {
+            text-align: left;
+        }
+    }
+}
+
+.actions-bar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+
+    @media (min-width: 768px) {
+        justify-content: flex-end;
+        width: auto;
+    }
+
+    button, .games-link {
+        white-space: nowrap;
+        flex: 1 1 auto;
+        justify-content: center;
+        text-align: center;
+    }
+}
+
+.games-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    box-sizing: border-box;
+    text-decoration: none;
+    color: $neon-pink;
+    border: 1px solid $neon-pink;
+    padding: 0 15px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 5px $neon-pink;
+    background: rgba($neon-pink, 0.05);
+
+    &:hover {
+        background: $neon-pink;
+        color: white;
+        box-shadow: 0 0 20px $neon-pink, 0 0 40px $neon-purple;
+        transform: translateY(-2px);
+    }
+
+    &::before {
+        content: "👾";
+        margin-right: 8px;
+        font-size: 1.1rem;
     }
 }
