@@ -36,6 +36,7 @@ export interface MonthData {
   month: number;
   monthName: string;
   days: Day[];
+  firstDayOfWeek: number;
 }
 
 export interface MultiMonthView {

@@ -479,6 +479,21 @@ function showMyBookingsModal(events: Event[]) {
     });
 }
 
+function getGradientStyle(events: Event[]): string {
+    if (events.length === 0) return '';
+    if (events.length === 1) return `background: ${events[0].color || '#ff00ff'}`;
+
+    const colors = events.map(e => e.color || '#ff00ff');
+    const step = 100 / colors.length;
+    let gradient = 'background: linear-gradient(135deg, ';
+    colors.forEach((color, i) => {
+        gradient += `${color} ${i * step}%, ${color} ${(i + 1) * step}%`;
+        if (i < colors.length - 1) gradient += ', ';
+    });
+    gradient += ')';
+    return gradient;
+}
+
 function renderYearOverview() {
     appDiv.classList.remove('auth-mode');
     // Generate 12 months starting from current month
@@ -498,21 +513,36 @@ function renderYearOverview() {
         <h2 style="color: #00ffff; text-shadow: 0 0 5px #00ffff; margin: 20px 0; text-transform: uppercase; text-align: center;">Yearly Overview</h2>
 
         <div class="year-overview-grid">
-            ${multiMonthView.months.map(month => `
+            ${multiMonthView.months.map(month => {
+                const emptyDays = (month.firstDayOfWeek + 6) % 7; // Monday start padding
+                const placeholders = Array(emptyDays).fill(null);
+                
+                return `
                 <div class="month-tile" data-year="${month.year}" data-month="${month.month}">
                     <div class="month-tile-header">
                         ${month.monthName} ${month.year}
                     </div>
                     <div class="month-tile-grid">
+                        <div class="mini-day-header">M</div>
+                        <div class="mini-day-header">T</div>
+                        <div class="mini-day-header">W</div>
+                        <div class="mini-day-header">T</div>
+                        <div class="mini-day-header">F</div>
+                        <div class="mini-day-header">S</div>
+                        <div class="mini-day-header">S</div>
+                        ${placeholders.map(() => `<div class="mini-day empty"></div>`).join('')}
                         ${month.days.map(day => `
                             <div class="mini-day ${day.events.length > 0 ? 'has-events' : ''}" 
                                  title="${day.date}${day.events.length > 0 ? ': ' + day.events.length + ' events' : ''}"
-                                 style="${day.events.length > 0 ? `background: ${day.events[0].color}` : ''}">
+                                 data-date="${day.date}"
+                                 style="${getGradientStyle(day.events)}">
+                                ${day.dayOfMonth}
                             </div>
                         `).join('')}
                     </div>
                 </div>
-            `).join('')}
+                `;
+            }).join('')}
         </div>
     `;
     updateAds();
@@ -537,6 +567,26 @@ function renderYearOverview() {
             currentMonth = parseInt(tile.getAttribute('data-month') || '0');
             currentView = 'calendar';
             renderCalendar();
+        });
+    });
+
+    document.querySelectorAll('.mini-day:not(.empty)').forEach(dayEl => {
+        dayEl.addEventListener('click', (e: any) => {
+            e.stopPropagation(); // Prevent tile click from triggering
+
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            dayEl.appendChild(ripple);
+            const x = e.clientX - dayEl.getBoundingClientRect().left;
+            const y = e.clientY - dayEl.getBoundingClientRect().top;
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+            setTimeout(() => ripple.remove(), 600);
+
+            const date = dayEl.getAttribute('data-date');
+            if (date) {
+                showBookingModal(date, allEvents);
+            }
         });
     });
 }

@@ -44,11 +44,13 @@ export function generateMultiMonthView(startYear: number, startMonth: number, co
 
     for (let i = 0; i < count; i++) {
         const monthView = generateMonthView(currentY, currentM, events);
+        const firstDay = new Date(currentY, currentM, 1).getDay(); // 0 = Sun, 1 = Mon...
         months.push({
             year: currentY,
             month: currentM,
             monthName: monthNames[currentM],
-            days: monthView.days
+            days: monthView.days,
+            firstDayOfWeek: firstDay
         });
 
         currentM++;
