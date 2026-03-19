@@ -24,7 +24,7 @@ setInterval(() => {
 }, 60 * 60 * 1000);
 
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { generateMonthView, isOverlap } from './calendar';
+import { generateMonthView, generateMultiMonthView, isOverlap, monthNames } from './calendar';
 import { Event } from './types';
 import { Chalkboard } from './chalkboard';
 
@@ -45,6 +45,7 @@ function hideSplashScreen() {
 let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth();
 let allEvents: Event[] = [];
+let currentView: 'calendar' | 'yearOverview' = 'calendar';
 
 interface Ad {
     text: string;
@@ -478,9 +479,70 @@ function showMyBookingsModal(events: Event[]) {
     });
 }
 
+function renderYearOverview() {
+    appDiv.classList.remove('auth-mode');
+    // Generate 12 months starting from current month
+    const multiMonthView = generateMultiMonthView(currentYear, currentMonth, 12, allEvents);
+
+    appDiv.innerHTML = `
+        <div class="top-bar">
+            <h1>Tegel</h1>
+            <div class="actions-bar">
+                <a href="https://games.tegelhus.uk" class="games-link" target="_blank">Games</a>
+                <button id="back-to-calendar" class="small-btn-neon purple">Back to Calendar</button>
+                <button id="my-bookings-btn" class="small-btn-neon">My Bookings</button>
+                <button id="logout-btn" class="small-btn-neon" style="color: #fff; border-color: #fff; box-shadow: 0 0 5px #fff;">Logout</button>
+            </div>
+        </div>
+        
+        <h2 style="color: #00ffff; text-shadow: 0 0 5px #00ffff; margin: 20px 0; text-transform: uppercase; text-align: center;">Yearly Overview</h2>
+
+        <div class="year-overview-grid">
+            ${multiMonthView.months.map(month => `
+                <div class="month-tile" data-year="${month.year}" data-month="${month.month}">
+                    <div class="month-tile-header">
+                        ${month.monthName} ${month.year}
+                    </div>
+                    <div class="month-tile-grid">
+                        ${month.days.map(day => `
+                            <div class="mini-day ${day.events.length > 0 ? 'has-events' : ''}" 
+                                 title="${day.date}${day.events.length > 0 ? ': ' + day.events.length + ' events' : ''}"
+                                 style="${day.events.length > 0 ? `background: ${day.events[0].color}` : ''}">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    updateAds();
+
+    document.getElementById('back-to-calendar')?.addEventListener('click', () => {
+        currentView = 'calendar';
+        renderCalendar();
+    });
+
+    document.getElementById('my-bookings-btn')?.addEventListener('click', () => {
+        showMyBookingsModal(allEvents);
+    });
+
+    document.getElementById('logout-btn')?.addEventListener('click', () => {
+        signOut(auth);
+        showToast("Logged out");
+    });
+
+    document.querySelectorAll('.month-tile').forEach(tile => {
+        tile.addEventListener('click', () => {
+            currentYear = parseInt(tile.getAttribute('data-year') || '0');
+            currentMonth = parseInt(tile.getAttribute('data-month') || '0');
+            currentView = 'calendar';
+            renderCalendar();
+        });
+    });
+}
+
 function renderCalendar() {
     appDiv.classList.remove('auth-mode');
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const monthView = generateMonthView(currentYear, currentMonth, allEvents);
 
     const todayObj = new Date();
@@ -493,6 +555,7 @@ function renderCalendar() {
             <div class="actions-bar">
                 <a href="https://games.tegelhus.uk" class="games-link" target="_blank">Games</a>
                 <button id="chalkboard-btn" class="small-btn-neon pink">Anslagstavla</button>
+                <button id="year-overview-btn" class="small-btn-neon cyan">Overview</button>
                 ${!isCurrentMonth ? `<button id="go-today-btn" class="small-btn-neon purple">Current Month</button>` : ''}
                 <button id="my-bookings-btn" class="small-btn-neon">My Bookings</button>
                 <button id="logout-btn" class="small-btn-neon" style="color: #fff; border-color: #fff; box-shadow: 0 0 5px #fff;">Logout</button>
@@ -545,6 +608,11 @@ function renderCalendar() {
             ripple.style.top = `${y}px`;
             setTimeout(() => ripple.remove(), 600);
         });
+    });
+
+    document.getElementById('year-overview-btn')?.addEventListener('click', () => {
+        currentView = 'yearOverview';
+        renderYearOverview();
     });
 
     document.getElementById('logout-btn')?.addEventListener('click', () => {
@@ -661,7 +729,11 @@ onAuthStateChanged(auth, (user) => {
     if (user) {
         subscribeToEvents((events) => {
             allEvents = events;
-            renderCalendar();
+            if (currentView === 'yearOverview') {
+                renderYearOverview();
+            } else {
+                renderCalendar();
+            }
             if (initialLoad) {
                 hideSplashScreen();
                 initialLoad = false;

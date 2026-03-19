@@ -1,4 +1,6 @@
-import { Event, Day, MonthView } from './types';
+import { Event, Day, MonthView, MultiMonthView, MonthData } from './types';
+
+export const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 export function generateMonthView(year: number, month: number, events: Event[]): MonthView {
     const days: Day[] = [];
@@ -33,6 +35,30 @@ export function generateMonthView(year: number, month: number, events: Event[]):
     }
     
     return { days };
+}
+
+export function generateMultiMonthView(startYear: number, startMonth: number, count: number, events: Event[]): MultiMonthView {
+    const months: MonthData[] = [];
+    let currentY = startYear;
+    let currentM = startMonth;
+
+    for (let i = 0; i < count; i++) {
+        const monthView = generateMonthView(currentY, currentM, events);
+        months.push({
+            year: currentY,
+            month: currentM,
+            monthName: monthNames[currentM],
+            days: monthView.days
+        });
+
+        currentM++;
+        if (currentM > 11) {
+            currentM = 0;
+            currentY++;
+        }
+    }
+
+    return { months };
 }
 
 export function isOverlap(newEvent: { start: number, end: number }, existingEvents: Event[]): boolean {

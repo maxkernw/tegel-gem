@@ -30,3 +30,14 @@ export interface Day {
 export interface MonthView {
   days: Day[];
 }
+
+export interface MonthData {
+  year: number;
+  month: number;
+  monthName: string;
+  days: Day[];
+}
+
+export interface MultiMonthView {
+  months: MonthData[];
+}

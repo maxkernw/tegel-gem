@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateMonthView, isOverlap } from './calendar';
+import { generateMonthView, isOverlap, generateMultiMonthView } from './calendar';
 import { Event } from './types';
 
 describe('Calendar Logic', () => {
@@ -47,5 +47,16 @@ describe('Calendar Logic', () => {
       const monthView = generateMonthView(2024, 0, events);
       expect(monthView.days[0].events.length).toBe(1);
       expect(monthView.days[0].events[0].title).toBe('Jan 1 Event');
+  });
+
+  it('should generate multi-month view correctly', () => {
+    const multiMonthView = generateMultiMonthView(2024, 10, 3, []); // Nov, Dec, Jan
+    expect(multiMonthView.months.length).toBe(3);
+    expect(multiMonthView.months[0].monthName).toBe('November');
+    expect(multiMonthView.months[0].year).toBe(2024);
+    expect(multiMonthView.months[1].monthName).toBe('December');
+    expect(multiMonthView.months[1].year).toBe(2024);
+    expect(multiMonthView.months[2].monthName).toBe('January');
+    expect(multiMonthView.months[2].year).toBe(2025);
   });
 });
