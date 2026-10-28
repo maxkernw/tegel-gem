@@ -27,6 +27,7 @@ import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebas
 import { generateMonthView, generateMultiMonthView, isOverlap, monthNames } from './calendar';
 import { Event } from './types';
 import { Chalkboard } from './chalkboard';
+import { initAdSystem } from './ads';
 
 const appDiv = document.querySelector<HTMLDivElement>('#app')!;
 const toastContainer = document.createElement('div');
@@ -47,162 +48,6 @@ let currentMonth = new Date().getMonth();
 let allEvents: Event[] = [];
 let currentView: 'calendar' | 'yearOverview' = 'calendar';
 
-interface Ad {
-    text: string;
-    image: string;
-}
-
-const ads: Ad[] = [
-    { text: "HYR EN IGELKOTT SOM SÄLLSKAP - 20 KR/DAG", image: "https://images.unsplash.com/photo-1584447128309-b66b7a4d1b63?auto=format&fit=crop&q=80&w=800" },
-    { text: "BLI CERTIFIERAD MOLNSKÅDARE - ANMÄL DIG NU", image: "https://images.unsplash.com/photo-1534088568595-a066f410bcda?auto=format&fit=crop&q=80&w=800" },
-    { text: "GÖR DIN EGEN OST I BADKARET: STARTKIT", image: "https://images.unsplash.com/photo-1486297678162-ad2a19b05840?auto=format&fit=crop&q=80&w=800" },
-    { text: "KURSER I ATT STIRRA PÅ GETTER", image: "https://images.unsplash.com/photo-1524024973431-2ad916746881?auto=format&fit=crop&q=80&w=800" },
-    { text: "ABONNEMANG PÅ SLUMPMÄSSIGA STENAR", image: "https://images.unsplash.com/photo-1525857597365-5f6dbff2e36e?auto=format&fit=crop&q=80&w=800" },
-    { text: "VATTENTÄTA TEPÅSAR - BRYGG UNDER VATTEN!", image: "https://images.unsplash.com/photo-1544787210-2211d7c309c7?auto=format&fit=crop&q=80&w=800" },
-    { text: "LÄR DIN GULDFISK ATT SJUNGA OPERA", image: "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=800" },
-    { text: "SÄLJ DIN SKUGGA TILL HÖGSTBJUDANDE", image: "https://images.unsplash.com/photo-1508020482468-fd295744b9ca?auto=format&fit=crop&q=80&w=800" },
-    { text: "EXTRA LÅNG SPAGHETTI FÖR ENSAMMA KVÄLLAR", image: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&q=80&w=800" },
-    { text: "HAR DU SETT EN UFO? RAPPORTERA HÄR!", image: "https://images.unsplash.com/photo-1506466010722-395ee2bef877?auto=format&fit=crop&q=80&w=800" },
-    { text: "PLÖJ SOM ETT PROFFS MED TRAKTOR-KRAFT", image: "https://images.unsplash.com/photo-1589923188900-85dae523342b?auto=format&fit=crop&q=80&w=800" },
-    { text: "SPÅDOM I FISKINNÄLVOR - BOKA TID", image: "https://images.unsplash.com/photo-1469122312224-c5846569efe1?auto=format&fit=crop&q=80&w=800" },
-    { text: "TALA MED DINA VÄXTER - NY KURS STARTAR NU", image: "https://images.unsplash.com/photo-1453904300235-0f2f60b15b5d?auto=format&fit=crop&q=80&w=800" },
-    { text: "ÄR DIN KATT EN RYMDVARELSE? TESTA HÄR", image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=800" },
-    { text: "JÄTTE-TRAKTOR TILL SALU: FÖRST TILL KVARN", image: "https://images.unsplash.com/photo-1594411130638-349f7e346f9f?auto=format&fit=crop&q=80&w=800" },
-    { text: "HYR EN PERSON SOM NICKAR IMPONERAT ÅT ALLT DU SÄGER", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=800" },
-    { text: "VI LÄSER DIN FRAMTID I EN ÖVERKOKT SPAGHETTI", image: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&q=80&w=800" },
-    { text: "KÖP EN HALV OSYNLIG STOL – SITT OM DU VÅGAR", image: "https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&q=80&w=800" },
-    { text: "DIN GRANNE ÄR TROLIGEN EN ÖDLA – TESTA HÄR", image: "https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?auto=format&fit=crop&q=80&w=800" },
-    { text: "KURS: SKRIK PÅ MOLN FÖR PERSONLIG UTVECKLING", image: "https://images.unsplash.com/photo-1534088568595-a066f410bcda?auto=format&fit=crop&q=80&w=800" },
-    { text: "VI TRÄNAR DIN KAKTUS ATT SKYDDA DITT HEM", image: "https://images.unsplash.com/photo-1509423350716-97f2360af2e4?auto=format&fit=crop&q=80&w=800" },
-    { text: "FÅ DIN SKUGGA ATT ARBETA ÖVERTID", image: "https://images.unsplash.com/photo-1508020482468-fd295744b9ca?auto=format&fit=crop&q=80&w=800" },
-    { text: "SÄLJ DIN SJÄL FÖR EN KUPONG PÅ FALAFEL", image: "https://images.unsplash.com/photo-1562967916-eb82221dfb92?auto=format&fit=crop&q=80&w=800" },
-    { text: "EXTRA LÅNG BANAN FÖR FILOSOFISKA DISKUSSIONER", image: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&q=80&w=800" },
-    { text: "HYR EN MÅS SOM SKRIKER DITT NAMN I GRYNINGEN", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800" },
-    { text: "KÖP EN DÖRR SOM LEDER TILL EN ANNAN DÖRR", image: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&q=80&w=800" },
-    { text: "STARTKIT FÖR ATT BLI LOKAL LEGENd I EN PARK", image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&q=80&w=800" },
-    { text: "VI ÖVERSÄTTER DIN HUNDS EXISTENTIELLA KRIS", image: "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&q=80&w=800" },
-    { text: "MYSTISK KNAPP – TRYCK INTE PÅ DEN", image: "https://images.unsplash.com/photo-1518779578993-ec3579fee39f?auto=format&fit=crop&q=80&w=800" },
-    { text: "BLI JAGAD AV EN PERSON I KYCKLINGDRÄKT (MOTIVATION)", image: "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&q=80&w=800" },
-    { text: "KURS I ATT MISSTOLKA VANLIGA SAKER", image: "https://images.unsplash.com/photo-1492724441997-5dc865305da7?auto=format&fit=crop&q=80&w=800" },
-    { text: "PRENUMERERA PÅ VECKANS KONSTIGA POTATIS", image: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&q=80&w=800" },
-    { text: "DIN BRÖDROST VISKAR OM NATTEN – VI FÖRKLARAR VARFÖR", image: "https://images.unsplash.com/photo-1585238342024-78d387f4a707?auto=format&fit=crop&q=80&w=800" },
-    { text: "TEST: ÄR DU EGENTLIGEN TRE IGELKOTTAR I EN ROCK?", image: "https://images.unsplash.com/photo-1584447128309-b66b7a4d1b63?auto=format&fit=crop&q=80&w=800" },
-    { text: "KÖP EN STEN SOM KÄNNER DINA HEMLIGHETER", image: "https://images.unsplash.com/photo-1525857597365-5f6dbff2e36e?auto=format&fit=crop&q=80&w=800" },
-    { text: "VI LÄR DIN BRÖDROST ATT SPELA SCHACK", image: "https://images.unsplash.com/photo-1585238342024-78d387f4a707?auto=format&fit=crop&q=80&w=800" },
-    { text: "TEST: ÄR DIN SOFFA EGENTLIGEN EN AGENT?", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=800" },
-    { text: "FÅ EN DAGLIG FÖROLÄMPNING FRÅN EN PAPPEGOJA", image: "https://images.unsplash.com/photo-1552728089-57bdde30beb3?auto=format&fit=crop&q=80&w=800" },
-    { text: "PRENUMERERA PÅ MYSTISKA LJUD FRÅN DIN GARDEROB", image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&q=80&w=800" },
-    { text: "KÖP EN BANAN SOM DÖMER DIG", image: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&q=80&w=800" },
-    { text: "DIN MIKROVÅGSUGN HAR ÅSIKTER – HÖR DEM HÄR", image: "https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?auto=format&fit=crop&q=80&w=800" },
-    { text: "KURS: ATT GÅ FÖRBI NÅGON UTAN ATT VETA ÅT VILKET HÅLL", image: "https://images.unsplash.com/photo-1492724441997-5dc865305da7?auto=format&fit=crop&q=80&w=800" },
-    { text: "FÅ EN PERSON SOM VISKAR 'WOW' VARJE GÅNG DU JOBBAR", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=800" },
-    { text: "VI UTVÄRDERAR DIN POTATIS PERSONLIGHET", image: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&q=80&w=800" },
-    { text: "KÖP EN KNAPP SOM STARTAR DRAMATISK MUSIK", image: "https://images.unsplash.com/photo-1518779578993-ec3579fee39f?auto=format&fit=crop&q=80&w=800" },
-    { text: "DIN KATT PLANERAR NÅGOT – LÄS RAPPORTEN", image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=800" },
-    { text: "HYR EN VIKING SOM NICKAR GODKÄNNANDE", image: "https://images.unsplash.com/photo-1605640840605-14ac1855827b?auto=format&fit=crop&q=80&w=800" },
-    { text: "TEST: ÄR DU TRE MÖSS I EN ROCK?", image: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?auto=format&fit=crop&q=80&w=800" },
-    { text: "KÖP EN DÖRR SOM IBLAND APPLÅDERAR", image: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&q=80&w=800" },
-    { text: "KURS I ATT TÄVLA MOT DUvor I ATT GÅ", image: "https://images.unsplash.com/photo-1501706362039-c6e80948bb8b?auto=format&fit=crop&q=80&w=800" },
-    { text: "VI SKICKAR EN PERSON SOM SÄGER 'DET VAR JAG SOM SA DET'", image: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&q=80&w=800" },
-    { text: "LÅT EN MUNK FÖRKLARA DINA TOASTERSYNDER", image: "https://images.unsplash.com/photo-1481833761820-0509d3217039?auto=format&fit=crop&q=80&w=800" },
-    { text: "DIN SKO HAR HEMLIGHETER – VI PRESSAR DEN", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800" },
-    { text: "ABONNERA PÅ EN DAGLIG FÖRVIRRANDE FAKTA OM GURKOR", image: "https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?auto=format&fit=crop&q=80&w=800" },
-    { text: "HYR EN PERSON SOM GÅR BAKLÄNGES FRAMFÖR DIG (AURA BOOST)", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=800" },
-    { text: "KÖP EN OSYNLIG CYKEL – KÄNN FRIHETEN", image: "https://images.unsplash.com/photo-1508973378894-64d9e6fcb6b6?auto=format&fit=crop&q=80&w=800" },
-    { text: "VI LÄR DIN VÄCKARKLOCKA ATT VARA PASSIV-AGGRESSIV", image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=800" },
-    { text: "KURS: ATT NICHA DIG SOM 'DEN SOM ALLTID HAR EN SKED'", image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&q=80&w=800" },
-    { text: "ABONNEMANG PÅ LÄTT BESVIKELSE – LEVERANS VARJE MÅNDAG", image: "https://images.unsplash.com/photo-1492724441997-5dc865305da7?auto=format&fit=crop&q=80&w=800" },
-    { text: "KÖP EN LUFTBIT FRÅN 1997 – LIMITED EDITION", image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&q=80&w=800" },
-    { text: "VI LÅTSAS VARA IMPONERADE AV DIN PLANTERING", image: "https://images.unsplash.com/photo-1453904300235-0f2f60b15b5d?auto=format&fit=crop&q=80&w=800" },
-    { text: "FÅ DIN SKRIVARE ATT RESPEKTERA DIG", image: "https://images.unsplash.com/photo-1581091215367-59ab6b5d9b5b?auto=format&fit=crop&q=80&w=800" },
-    { text: "TEST: ÄR DU EN LÅDA MED OKLARA AMBITIONER?", image: "https://images.unsplash.com/photo-1519222970733-f546218fa6d7?auto=format&fit=crop&q=80&w=800" },
-    { text: "VI SÄLJER EN PINNE MED HÖG SJÄLVKÄNSLA", image: "https://images.unsplash.com/photo-1501706362039-c6e80948bb8b?auto=format&fit=crop&q=80&w=800" },
-    { text: "HYR EN PERSON SOM SÄGER 'INTRESSANT…' VID FEL TILLFÄLLE", image: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&q=80&w=800" },
-    { text: "KÖP EN HATT SOM VISKAR DINA DÅLIGA IDÉER HÖGRE", image: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&q=80&w=800" },
-    { text: "VI TRÄNAR DIN VATTENFLASKA ATT VARA DÖMANDE", image: "https://images.unsplash.com/photo-1526406915894-7bcd65f60845?auto=format&fit=crop&q=80&w=800" },
-    { text: "KURS I ATT STÅ OCH VÄNTA UTAN SYFTE", image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&q=80&w=800" },
-    { text: "KÖP EN LÅDA SOM IBLAND ANDAS", image: "https://images.unsplash.com/photo-1519222970733-f546218fa6d7?auto=format&fit=crop&q=80&w=800" },
-    { text: "FÅ EN DAGLIG RAPPORT OM INGENTING", image: "https://images.unsplash.com/photo-1492724441997-5dc865305da7?auto=format&fit=crop&q=80&w=800" },
-    { text: "VI SÄLJER ETT STEG SOM ALDRIG TAR SLUT", image: "https://images.unsplash.com/photo-1505691723518-36a5ac3b2b8d?auto=format&fit=crop&q=80&w=800" },
-    { text: "TEST: ÄR DIN SKUGGA TRÖTT PÅ DIG?", image: "https://images.unsplash.com/photo-1508020482468-fd295744b9ca?auto=format&fit=crop&q=80&w=800" },
-    { text: "KÖP EN TOM BURK MED STARKA ÅSIKTER", image: "https://images.unsplash.com/photo-1585238342024-78d387f4a707?auto=format&fit=crop&q=80&w=800" },
-    { text: "VI SKICKAR EN PERSON SOM AVBRYTER DIG MED 'SIDOSPÅR!'", image: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&q=80&w=800" },
-    { text: "ABONNERA PÅ VECKANS OBEKVÄMA TYSTNAD", image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&q=80&w=800" },
-    { text: "KÖP EN SPEGEL SOM INTE HÅLLER MED DIG", image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&q=80&w=800" },
-    { text: "KURS: ATT GÅ IN I ETT RUM OCH GLÖMMA VARFÖR", image: "https://images.unsplash.com/photo-1492724441997-5dc865305da7?auto=format&fit=crop&q=80&w=800" },
-    { text: "VI OPTIMERAR DIN DRAMATISKA SUCK", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=800" },
-    { text: "KÖP EN STOL SOM KÄNNER SIG ÖVERKVALIFICERAD", image: "https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&q=80&w=800" },
-    { text: "HYR EN PERSON SOM NICKAR FELAKTIGT", image: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&q=80&w=800" },
-    { text: "VI LÄR DIN VÄSKA ATT HÅLLA HEMLIGHETER FÖR BRA", image: "https://images.unsplash.com/photo-1526178612295-3b4b2b2b5a77?auto=format&fit=crop&q=80&w=800" },
-    { text: "TEST: ÄR DU EGENTLIGEN EN MÅTTBAND?", image: "https://images.unsplash.com/photo-1520975916090-3105956dac38?auto=format&fit=crop&q=80&w=800" },
-    { text: "KÖP EN KNAPP SOM INTE GÖR NÅGOT MEN KÄNNS VIKTIG", image: "https://images.unsplash.com/photo-1518779578993-ec3579fee39f?auto=format&fit=crop&q=80&w=800" },
-    { text: "FÅ EN PERSON SOM VISKAR 'DET HÄR ÄR LORE' I DITT ÖRA", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=800" }
-];
-
-function updateAds() {
-    const adSpaces = document.querySelectorAll('.ad-space');
-    const styles = [
-        "style-tabloid",
-        "style-neon",
-        "style-vintage",
-        "style-urgent",
-        "style-comic",
-        "style-glitch",
-        "style-luxury",
-        "style-retro90",
-        "style-terminal",
-        "style-sticker",
-        "style-horror",
-        "style-minimal",
-        "style-vaporwave",
-        "style-brutal",
-        "style-glass",
-        "style-cybergrid",
-        "style-newspaper",
-        "style-kids",
-        "style-hud",
-        "style-paper",
-        "style-liquid",
-        "style-warning"
-    ];
-
-    adSpaces.forEach(spaceEl => {
-        const tryLoadAd = () => {
-            const space = spaceEl as HTMLElement;
-
-            const ad = ads[Math.floor(Math.random() * ads.length)];
-            const style = styles[Math.floor(Math.random() * styles.length)];
-
-            const animations = ["zoom", "shake", "drift", "pulse"];
-            const anim = animations[Math.floor(Math.random() * animations.length)];
-
-            space.dataset.anim = anim;
-
-            const img = new Image();
-            img.src = ad.image;
-
-            img.onload = () => {
-                styles.forEach(s => space.classList.remove(s));
-                space.classList.add(style);
-
-                space.innerHTML = `
-                    <div class="ad-bg-anim" style="background-image: url('${ad.image}')"></div>
-                    <div class="ad-overlay"></div>
-                    <div class="ad-content">${ad.text}</div>
-                `;
-            };
-
-            img.onerror = () => {
-                tryLoadAd();
-            };
-        };
-
-        tryLoadAd();
-    });
-}
-
-setInterval(updateAds, 10000);
-
 function showToast(message: string, type: 'info' | 'error' = 'info') {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
@@ -212,8 +57,10 @@ function showToast(message: string, type: 'info' | 'error' = 'info') {
     setTimeout(() => {
         toast.classList.add('fade-out');
         setTimeout(() => toast.remove(), 500);
-    }, 3000);
+    }, 3500);
 }
+
+initAdSystem(showToast);
 
 function renderAuth() {
     appDiv.classList.add('auth-mode');
@@ -228,20 +75,6 @@ function renderAuth() {
             <button id="login-btn">Login</button>
         </div>
     `;
-    updateAds();
-
-    document.querySelectorAll('.ad-space').forEach(ad => {
-        ad.addEventListener('click', (e: any) => {
-            const ripple = document.createElement('span');
-            ripple.classList.add('ripple');
-            ad.appendChild(ripple);
-            const x = e.clientX - ad.getBoundingClientRect().left;
-            const y = e.clientY - ad.getBoundingClientRect().top;
-            ripple.style.left = `${x}px`;
-            ripple.style.top = `${y}px`;
-            setTimeout(() => ripple.remove(), 600);
-        });
-    });
 
     const handleLogin = async () => {
         const email = (document.getElementById('email') as HTMLInputElement).value;
@@ -545,7 +378,6 @@ function renderYearOverview() {
             }).join('')}
         </div>
     `;
-    updateAds();
 
     document.getElementById('back-to-calendar')?.addEventListener('click', () => {
         currentView = 'calendar';
@@ -645,20 +477,6 @@ function renderCalendar() {
             `).join('')}
         </div>
     `;
-    updateAds();
-
-    document.querySelectorAll('.ad-space').forEach(ad => {
-        ad.addEventListener('click', (e: any) => {
-            const ripple = document.createElement('span');
-            ripple.classList.add('ripple');
-            ad.appendChild(ripple);
-            const x = e.clientX - ad.getBoundingClientRect().left;
-            const y = e.clientY - ad.getBoundingClientRect().top;
-            ripple.style.left = `${x}px`;
-            ripple.style.top = `${y}px`;
-            setTimeout(() => ripple.remove(), 600);
-        });
-    });
 
     document.getElementById('year-overview-btn')?.addEventListener('click', () => {
         currentView = 'yearOverview';
