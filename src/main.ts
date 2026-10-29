@@ -46,7 +46,7 @@ function hideSplashScreen() {
 let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth();
 let allEvents: Event[] = [];
-let currentView: 'calendar' | 'yearOverview' = 'calendar';
+let currentView: 'calendar' | 'yearOverview' | 'games' = 'calendar';
 
 function showToast(message: string, type: 'info' | 'error' = 'info') {
     const toast = document.createElement('div');
@@ -67,7 +67,7 @@ function renderAuth() {
     appDiv.innerHTML = `
         <div class="top-bar">
             <h1>Tegel</h1>
-            <a href="https://games.tegelhus.uk" class="games-link" target="_blank">Games</a>
+            <button id="games-btn" class="games-link">Games</button>
         </div>
         <div class="auth-form">
             <input type="email" id="email" placeholder="Email" />
@@ -75,6 +75,11 @@ function renderAuth() {
             <button id="login-btn">Login</button>
         </div>
     `;
+
+    document.getElementById('games-btn')?.addEventListener('click', () => {
+        currentView = 'games';
+        renderGames();
+    });
 
     const handleLogin = async () => {
         const email = (document.getElementById('email') as HTMLInputElement).value;
@@ -327,6 +332,60 @@ function getGradientStyle(events: Event[]): string {
     return gradient;
 }
 
+function renderGames() {
+    appDiv.classList.remove('auth-mode');
+    const isLoggedIn = !!auth.currentUser;
+
+    appDiv.innerHTML = `
+        <div class="top-bar">
+            <h1>Tegel</h1>
+            <div class="actions-bar">
+                ${isLoggedIn ? `
+                    <button id="back-to-calendar" class="small-btn-neon purple">Back to Calendar</button>
+                    <button id="my-bookings-btn" class="small-btn-neon">My Bookings</button>
+                    <button id="logout-btn" class="small-btn-neon" style="color: #fff; border-color: #fff; box-shadow: 0 0 5px #fff;">Logout</button>
+                ` : `
+                    <button id="back-to-auth" class="small-btn-neon purple">Back to Login</button>
+                `}
+            </div>
+        </div>
+
+        <h2 style="color: #00ffff; text-shadow: 0 0 5px #00ffff; margin: 20px 0; text-transform: uppercase; text-align: center;">Games</h2>
+
+        <div class="games-grid">
+            <a href="https://games.tegelhus.uk" class="game-card pink" target="_blank" rel="noopener noreferrer">
+                <div class="game-card-icon">👾</div>
+                <div class="game-card-title">Games</div>
+                <div class="game-card-url">games.tegelhus.uk</div>
+            </a>
+            <a href="https://atlas.tegelhus.uk" class="game-card cyan" target="_blank" rel="noopener noreferrer">
+                <div class="game-card-icon">🌍</div>
+                <div class="game-card-title">Atlas</div>
+                <div class="game-card-url">atlas.tegelhus.uk</div>
+            </a>
+        </div>
+    `;
+
+    document.getElementById('back-to-calendar')?.addEventListener('click', () => {
+        currentView = 'calendar';
+        renderCalendar();
+    });
+
+    document.getElementById('back-to-auth')?.addEventListener('click', () => {
+        currentView = 'calendar';
+        renderAuth();
+    });
+
+    document.getElementById('my-bookings-btn')?.addEventListener('click', () => {
+        showMyBookingsModal(allEvents);
+    });
+
+    document.getElementById('logout-btn')?.addEventListener('click', () => {
+        signOut(auth);
+        showToast("Logged out");
+    });
+}
+
 function renderYearOverview() {
     appDiv.classList.remove('auth-mode');
     // Generate 12 months starting from current month
@@ -336,7 +395,7 @@ function renderYearOverview() {
         <div class="top-bar">
             <h1>Tegel</h1>
             <div class="actions-bar">
-                <a href="https://games.tegelhus.uk" class="games-link" target="_blank">Games</a>
+                <button id="games-btn" class="games-link">Games</button>
                 <button id="back-to-calendar" class="small-btn-neon purple">Back to Calendar</button>
                 <button id="my-bookings-btn" class="small-btn-neon">My Bookings</button>
                 <button id="logout-btn" class="small-btn-neon" style="color: #fff; border-color: #fff; box-shadow: 0 0 5px #fff;">Logout</button>
@@ -378,6 +437,11 @@ function renderYearOverview() {
             }).join('')}
         </div>
     `;
+
+    document.getElementById('games-btn')?.addEventListener('click', () => {
+        currentView = 'games';
+        renderGames();
+    });
 
     document.getElementById('back-to-calendar')?.addEventListener('click', () => {
         currentView = 'calendar';
@@ -435,7 +499,7 @@ function renderCalendar() {
         <div class="top-bar">
             <h1>Tegel</h1>
             <div class="actions-bar">
-                <a href="https://games.tegelhus.uk" class="games-link" target="_blank">Games</a>
+                <button id="games-btn" class="games-link">Games</button>
                 <button id="chalkboard-btn" class="small-btn-neon pink">Anslagstavla</button>
                 <button id="year-overview-btn" class="small-btn-neon cyan">Overview</button>
                 ${!isCurrentMonth ? `<button id="go-today-btn" class="small-btn-neon purple">Current Month</button>` : ''}
@@ -477,6 +541,11 @@ function renderCalendar() {
             `).join('')}
         </div>
     `;
+
+    document.getElementById('games-btn')?.addEventListener('click', () => {
+        currentView = 'games';
+        renderGames();
+    });
 
     document.getElementById('year-overview-btn')?.addEventListener('click', () => {
         currentView = 'yearOverview';
@@ -599,6 +668,8 @@ onAuthStateChanged(auth, (user) => {
             allEvents = events;
             if (currentView === 'yearOverview') {
                 renderYearOverview();
+            } else if (currentView === 'games') {
+                renderGames();
             } else {
                 renderCalendar();
             }
@@ -608,7 +679,11 @@ onAuthStateChanged(auth, (user) => {
             }
         });
     } else {
-        renderAuth();
+        if (currentView === 'games') {
+            renderGames();
+        } else {
+            renderAuth();
+        }
         if (initialLoad) {
             hideSplashScreen();
             initialLoad = false;
