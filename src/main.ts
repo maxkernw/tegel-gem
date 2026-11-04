@@ -1,4 +1,5 @@
 import './style.scss';
+import './vcr-theme.scss';
 import { registerSW } from 'virtual:pwa-register';
 import { auth, subscribeToEvents, addEvent, deleteEvent, deleteMultipleEvents } from './firebase';
 import { initSynthBackground } from './synth-background';
@@ -109,13 +110,160 @@ function friendlyAuthError(e: any): string {
     return map[code] || e?.message || 'Something went wrong.';
 }
 
+// ===================== Themes =====================
+type Theme = 'synth' | 'win95';
+let storedTheme = localStorage.getItem('tegel-theme');
+if (storedTheme === 'vcr') storedTheme = 'win95';
+let currentTheme: Theme = (storedTheme as Theme) || 'synth';
+
+function applyTheme(theme: Theme) {
+    currentTheme = theme;
+    try {
+        localStorage.setItem('tegel-theme', theme);
+    } catch (e) {}
+    if (theme === 'win95') {
+        document.documentElement.setAttribute('data-theme', 'win95');
+        document.body.classList.add('theme-win95');
+        document.body.classList.remove('theme-vcr');
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+        document.body.classList.remove('theme-win95');
+        document.body.classList.remove('theme-vcr');
+    }
+    updateThemeToggleButtons();
+}
+// Apply saved theme immediately on startup
+applyTheme(currentTheme);
+
+function updateThemeToggleButtons() {
+    const isWin95 = currentTheme === 'win95';
+    const label = isWin95 ? "⚡ SYNTH" : "🪟 WIN '95";
+    const title = isWin95 ? 'Switch to Synthwave Theme' : 'Switch to Windows 95 Theme';
+    document.querySelectorAll<HTMLButtonElement>('.theme-toggle-btn').forEach(btn => {
+        btn.innerHTML = `<span class="theme-icon">${isWin95 ? '⚡' : '🪟'}</span><span class="theme-label">${label}</span>`;
+        btn.title = title;
+        btn.setAttribute('aria-label', title);
+        btn.classList.toggle('active-win95', isWin95);
+    });
+}
+
+function toggleTheme() {
+    applyTheme(currentTheme === 'synth' ? 'win95' : 'synth');
+}
+
+function themeToggleBtnHtml() {
+    const isWin95 = currentTheme === 'win95';
+    const label = isWin95 ? "⚡ SYNTH" : "🪟 WIN '95";
+    const title = isWin95 ? 'Switch to Synthwave Theme' : 'Switch to Windows 95 Theme';
+    return `
+        <button type="button" class="theme-toggle-btn ${isWin95 ? 'active-win95' : ''}" title="${title}" aria-label="${title}">
+            <span class="theme-icon">${isWin95 ? '⚡' : '🪟'}</span>
+            <span class="theme-label">${label}</span>
+        </button>
+    `;
+}
+
+// Clock updater for Windows 95 System Tray
+function updateWin95Clock() {
+    const clockEl = document.getElementById('win95-clock');
+    if (!clockEl) return;
+    const now = new Date();
+    clockEl.textContent = now.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
+}
+setInterval(updateWin95Clock, 1000);
+setTimeout(updateWin95Clock, 50);
+
+// Initialize Windows 95 Taskbar & Start Menu
+function initWin95System() {
+    const startBtn = document.getElementById('win95-start-btn');
+    const startMenu = document.getElementById('win95-start-menu');
+
+    startBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        startMenu?.classList.toggle('open');
+        startBtn.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        if (!target.closest('#win95-start-menu') && !target.closest('#win95-start-btn')) {
+            startMenu?.classList.remove('open');
+            startBtn?.classList.remove('active');
+        }
+    });
+
+    const closeStart = () => {
+        startMenu?.classList.remove('open');
+        startBtn?.classList.remove('active');
+    };
+
+    document.getElementById('win95-start-cal')?.addEventListener('click', () => {
+        closeStart();
+        if (auth.currentUser) {
+            currentView = 'calendar';
+            renderCalendar();
+        } else {
+            currentView = 'calendar';
+            renderAuth();
+        }
+    });
+
+    document.getElementById('win95-start-year')?.addEventListener('click', () => {
+        closeStart();
+        currentView = 'yearOverview';
+        renderYearOverview();
+    });
+
+    document.getElementById('win95-start-games')?.addEventListener('click', () => {
+        closeStart();
+        currentView = 'games';
+        renderGames();
+    });
+
+    document.getElementById('win95-start-board')?.addEventListener('click', () => {
+        closeStart();
+        currentView = 'board';
+        new Chalkboard(appDiv);
+        document.getElementById('back-to-calendar')?.addEventListener('click', () => {
+            currentView = 'calendar';
+            renderCalendar();
+        });
+    });
+
+    document.getElementById('win95-start-theme')?.addEventListener('click', () => {
+        closeStart();
+        toggleTheme();
+    });
+
+    document.getElementById('win95-tray-theme')?.addEventListener('click', () => {
+        toggleTheme();
+    });
+
+    document.getElementById('win95-start-logout')?.addEventListener('click', () => {
+        closeStart();
+        if (auth.currentUser) {
+            signOut(auth);
+            showToast("Logged out");
+        } else {
+            renderAuth();
+        }
+    });
+}
+
+// Initialize stored theme and Windows 95 shell
+applyTheme(currentTheme);
+setTimeout(initWin95System, 50);
+
 function authShell(inner: string) {
     // The login view shows the big TEGEL logo inside the card, so only show the small brand on the other views
     const hasCardLogo = inner.includes('class="auth-logo"');
     return `
         <div class="auth-topbar">
-            ${hasCardLogo ? '<span></span>' : '<div class="cal-logo">TEGEL</div>'}
-            <button id="games-btn" class="games-link">Games</button>
+            ${hasCardLogo ? '<div class="auth-dialog-title">Logon to Tegel</div>' : '<div class="cal-logo">TEGEL</div>'}
+            <div class="auth-topbar-actions">
+                ${themeToggleBtnHtml()}
+                <button id="games-btn" class="games-link">Games</button>
+            </div>
         </div>
         <div class="auth-card">
             <div class="auth-card-glow"></div>
@@ -136,6 +284,10 @@ function field(opts: { id: string; type: string; label: string; icon: string; au
 }
 
 function bindAuthCommon() {
+    document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', toggleTheme);
+    });
+
     document.getElementById('games-btn')?.addEventListener('click', () => {
         currentView = 'games';
         renderGames();
@@ -513,18 +665,21 @@ function appHeader(active: MainView) {
     return `
         <header class="cal-header">
             <div class="cal-logo">TEGEL</div>
-            ${user ? `
-                <div class="user-menu">
-                    <button class="user-avatar" id="user-avatar" aria-label="Account menu">${escapeHtml((me[0] || '?').toUpperCase())}</button>
-                    <div class="user-dropdown" id="user-dropdown">
-                        <div class="user-dropdown-email">${escapeHtml(me)}</div>
-                        <button class="user-dropdown-item" id="my-bookings-btn">${CAL_ICONS.list}<span>My bookings</span></button>
-                        <button class="user-dropdown-item danger" id="logout-btn">${CAL_ICONS.logout}<span>Log out</span></button>
+            <div class="cal-header-actions">
+                ${themeToggleBtnHtml()}
+                ${user ? `
+                    <div class="user-menu">
+                        <button class="user-avatar" id="user-avatar" aria-label="Account menu">${escapeHtml((me[0] || '?').toUpperCase())}</button>
+                        <div class="user-dropdown" id="user-dropdown">
+                            <div class="user-dropdown-email">${escapeHtml(me)}</div>
+                            <button class="user-dropdown-item" id="my-bookings-btn">${CAL_ICONS.list}<span>My bookings</span></button>
+                            <button class="user-dropdown-item danger" id="logout-btn">${CAL_ICONS.logout}<span>Log out</span></button>
+                        </div>
                     </div>
-                </div>
-            ` : `
-                <button class="cal-today-btn" id="header-login-btn">Log in</button>
-            `}
+                ` : `
+                    <button class="cal-today-btn" id="header-login-btn">Log in</button>
+                `}
+            </div>
         </header>
         ${user ? `
             <nav class="cal-tabs">
@@ -551,6 +706,10 @@ function navigateTo(view: MainView) {
 }
 
 function bindAppHeader() {
+    document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', toggleTheme);
+    });
+
     document.querySelectorAll<HTMLButtonElement>('.cal-tab[data-view]').forEach(btn => {
         btn.addEventListener('click', () => {
             if (btn.classList.contains('active')) return;
@@ -762,7 +921,7 @@ function showMyBookingsModal(events: Event[]) {
         <div class="modal-content" style="max-height: 85vh; display: flex; flex-direction: column;">
             <h2>My Bookings</h2>
             <div class="my-bookings-list" style="overflow-y: auto; flex: 1; padding-right: 5px;">
-                ${userEvents.length === 0 ? '<p style="text-align: center; color: #ff00ff;">No bookings found.</p>' : ''}
+                ${userEvents.length === 0 ? '<p class="no-bookings-msg">No bookings found.</p>' : ''}
                 
                 ${upcomingEvents.length > 0 ? `
                     <div class="booking-section">
@@ -932,65 +1091,47 @@ function renderYearOverview() {
     const multiMonthView = generateMultiMonthView(currentYear, currentMonth, 12, allEvents);
 
     appDiv.innerHTML = `
-        <div class="top-bar">
-            <h1>Tegel</h1>
-            <div class="actions-bar">
-                <button id="games-btn" class="games-link">Games</button>
-                <button id="back-to-calendar" class="small-btn-neon purple">Back to Calendar</button>
-                <button id="my-bookings-btn" class="small-btn-neon">My Bookings</button>
-                <button id="logout-btn" class="small-btn-neon" style="color: #fff; border-color: #fff; box-shadow: 0 0 5px #fff;">Logout</button>
-            </div>
-        </div>
-        
-        <h2 style="color: #00ffff; text-shadow: 0 0 5px #00ffff; margin: 20px 0; text-transform: uppercase; text-align: center;">Yearly Overview</h2>
+        <div class="cal">
+            ${appHeader('yearOverview')}
+            
+            <h2 style="color: #00ffff; text-shadow: 0 0 5px #00ffff; margin: 16px 0 12px; text-transform: uppercase; text-align: center;">Yearly Overview</h2>
 
-        <div class="year-overview-grid">
-            ${multiMonthView.months.map(month => {
-                const emptyDays = (month.firstDayOfWeek + 6) % 7; // Monday start padding
-                const placeholders = Array(emptyDays).fill(null);
-                
-                return `
-                <div class="month-tile" data-year="${month.year}" data-month="${month.month}">
-                    <div class="month-tile-header">
-                        ${month.monthName} ${month.year}
+            <div class="year-overview-grid">
+                ${multiMonthView.months.map(month => {
+                    const emptyDays = (month.firstDayOfWeek + 6) % 7; // Monday start padding
+                    const placeholders = Array(emptyDays).fill(null);
+                    
+                    return `
+                    <div class="month-tile" data-year="${month.year}" data-month="${month.month}">
+                        <div class="month-tile-header">
+                            ${month.monthName} ${month.year}
+                        </div>
+                        <div class="month-tile-grid">
+                            <div class="mini-day-header">M</div>
+                            <div class="mini-day-header">T</div>
+                            <div class="mini-day-header">W</div>
+                            <div class="mini-day-header">T</div>
+                            <div class="mini-day-header">F</div>
+                            <div class="mini-day-header">S</div>
+                            <div class="mini-day-header">S</div>
+                            ${placeholders.map(() => `<div class="mini-day empty"></div>`).join('')}
+                            ${month.days.map(day => `
+                                <div class="mini-day ${day.events.length > 0 ? 'has-events' : ''}" 
+                                     title="${day.date}${day.events.length > 0 ? ': ' + day.events.length + ' events' : ''}"
+                                     data-date="${day.date}"
+                                     style="${getGradientStyle(day.events)}">
+                                    ${day.dayOfMonth}
+                                </div>
+                            `).join('')}
+                        </div>
                     </div>
-                    <div class="month-tile-grid">
-                        <div class="mini-day-header">M</div>
-                        <div class="mini-day-header">T</div>
-                        <div class="mini-day-header">W</div>
-                        <div class="mini-day-header">T</div>
-                        <div class="mini-day-header">F</div>
-                        <div class="mini-day-header">S</div>
-                        <div class="mini-day-header">S</div>
-                        ${placeholders.map(() => `<div class="mini-day empty"></div>`).join('')}
-                        ${month.days.map(day => `
-                            <div class="mini-day ${day.events.length > 0 ? 'has-events' : ''}" 
-                                 title="${day.date}${day.events.length > 0 ? ': ' + day.events.length + ' events' : ''}"
-                                 data-date="${day.date}"
-                                 style="${getGradientStyle(day.events)}">
-                                ${day.dayOfMonth}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                `;
-            }).join('')}
+                    `;
+                }).join('')}
+            </div>
         </div>
     `;
 
-    document.getElementById('games-btn')?.addEventListener('click', () => {
-        currentView = 'games';
-        renderGames();
-    });
-
-    document.getElementById('back-to-calendar')?.addEventListener('click', () => {
-        currentView = 'calendar';
-        renderCalendar();
-    });
-
-    document.getElementById('my-bookings-btn')?.addEventListener('click', () => {
-        showMyBookingsModal(allEvents);
-    });
+    bindAppHeader();
 
     document.getElementById('logout-btn')?.addEventListener('click', () => {
         signOut(auth);

@@ -24,6 +24,24 @@ export function initSynthBackground() {
         if (!ctx) return;
         ctx.clearRect(0, 0, width, height);
 
+        const isWin95 = document.body.classList.contains('theme-win95') || document.body.classList.contains('theme-vcr');
+        if (isWin95) {
+            // Iconic Windows 95 Teal Desktop
+            ctx.fillStyle = '#008080';
+            ctx.fillRect(0, 0, width, height);
+
+            // Subtle classic 95 dithering pattern
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+            for (let y = 0; y < height; y += 4) {
+                for (let x = (y % 8 === 0 ? 0 : 2); x < width; x += 4) {
+                    ctx.fillRect(x, y, 2, 2);
+                }
+            }
+
+            requestAnimationFrame(draw);
+            return;
+        }
+
         // Background Gradient
         const bgGradient = ctx.createLinearGradient(0, 0, 0, height);
         bgGradient.addColorStop(0, '#0d0221');

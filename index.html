@@ -15,18 +15,115 @@
     <link rel="apple-touch-startup-image" href="/apple-splash-1668-2388.png" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
     <link rel="apple-touch-startup-image" href="/apple-splash-1536-2048.png" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
     <link rel="apple-touch-startup-image" href="/apple-splash-1170-2532.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
-    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Special+Elite&family=VT323&display=swap" rel="stylesheet">
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('tegel-theme');
+          if (t === 'win95' || t === 'vcr') {
+            document.documentElement.setAttribute('data-theme', 'win95');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('tegel-theme');
+          if (t === 'win95' || t === 'vcr') {
+            document.body.classList.add('theme-win95');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <canvas id="synth-canvas"></canvas>
     
     <div id="splash-screen">
-      <div class="splash-content">
+      <!-- Default Synthwave Splash -->
+      <div class="splash-content synth-splash">
         <div class="splash-logo">TEGEL</div>
         <div class="loading-bar-container">
           <div class="loading-bar"></div>
         </div>
         <div class="loading-text">INITIALIZING SYSTEMS...</div>
+      </div>
+
+      <!-- Windows 95 Boot Screen Splash -->
+      <div class="splash-content win95-boot-splash">
+        <div class="win95-boot-clouds"></div>
+        <div class="win95-boot-center">
+          <div class="win95-boot-flag-logo">
+            <div class="flag-matrix">
+              <span class="flag-tile red"></span>
+              <span class="flag-tile green"></span>
+              <span class="flag-tile blue"></span>
+              <span class="flag-tile yellow"></span>
+            </div>
+          </div>
+          <div class="win95-boot-brand">
+            <div class="win95-boot-sub">Microsoft<sup>&reg;</sup></div>
+            <div class="win95-boot-title">Windows<span class="win95-boot-95">95</span></div>
+            <div class="win95-boot-edition">TEGEL EDITION</div>
+          </div>
+        </div>
+        <div class="win95-boot-bottom">
+          <div class="win95-boot-bar">
+            <div class="win95-boot-scroller"></div>
+          </div>
+          <div class="win95-boot-status">Starting Windows 95...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Windows 95 Taskbar & Start Menu (active in Windows 95 theme) -->
+    <div class="win95-start-menu" id="win95-start-menu" aria-label="Start Menu">
+      <div class="win95-start-banner">
+        <span>Windows<b>95</b></span>
+      </div>
+      <div class="win95-start-items">
+        <button type="button" class="win95-start-item" id="win95-start-cal">
+          <span class="win95-menu-icon">📅</span> <span>Calendar</span>
+        </button>
+        <button type="button" class="win95-start-item" id="win95-start-year">
+          <span class="win95-menu-icon">🗓️</span> <span>Year Overview</span>
+        </button>
+        <button type="button" class="win95-start-item" id="win95-start-games">
+          <span class="win95-menu-icon">👾</span> <span>Games...</span>
+        </button>
+        <button type="button" class="win95-start-item" id="win95-start-board">
+          <span class="win95-menu-icon">📝</span> <span>Chalkboard</span>
+        </button>
+        <div class="win95-menu-divider"></div>
+        <button type="button" class="win95-start-item" id="win95-start-theme">
+          <span class="win95-menu-icon">⚡</span> <span>Switch to Synthwave</span>
+        </button>
+        <div class="win95-menu-divider"></div>
+        <button type="button" class="win95-start-item" id="win95-start-logout">
+          <span class="win95-menu-icon">🚪</span> <span>Log Off...</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="win95-taskbar" id="win95-taskbar" aria-label="Windows 95 Taskbar">
+      <button type="button" class="win95-start-btn" id="win95-start-btn">
+        <span class="win95-flag-icon">🪟</span>
+        <strong>Start</strong>
+      </button>
+      <div class="win95-task-items">
+        <div class="win95-task-item active" id="win95-active-task">
+          <span class="win95-task-icon">📅</span>
+          <span class="win95-task-title">Tegel Calendar</span>
+        </div>
+      </div>
+      <div class="win95-systray">
+        <button type="button" class="win95-tray-btn" id="win95-tray-theme" title="Switch Theme (Windows 95 / Synthwave)">
+          <span class="win95-tray-icon">⚡</span>
+        </button>
+        <span class="win95-clock" id="win95-clock">--:--</span>
       </div>
     </div>
 

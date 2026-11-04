@@ -1,0 +1,1767 @@
+/* =========================================================
+   AUTHENTIC WINDOWS 95 THEME (HIGH CONTRAST & ACCESSIBLE)
+   Classic Teal Desktop, 3D Bevels, MS Sans Serif, Start Menu
+   ========================================================= */
+
+$win-teal: #008080;
+$win-grey: #c0c0c0;
+$win-light: #ffffff;
+$win-shadow: #808080;
+$win-dark: #000000;
+$win-navy: #000080;
+$win-navy-end: #1084d0;
+$win-font: 'Segoe UI', Tahoma, Geneva, Verdana, Arial, sans-serif;
+
+/* 3D Bevel Mixins */
+@mixin win-raised {
+  background: $win-grey;
+  border: 2px solid;
+  border-color: $win-light $win-shadow $win-shadow $win-light;
+  box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 $win-dark;
+}
+
+@mixin win-depressed {
+  background: $win-grey;
+  border: 2px solid;
+  border-color: $win-shadow $win-light $win-light $win-shadow;
+  box-shadow: inset 1px 1px 0 $win-dark, inset -1px -1px 0 #dfdfdf;
+}
+
+@mixin win-sunken {
+  background: #ffffff;
+  color: #000000;
+  border: 2px solid;
+  border-color: $win-shadow $win-light $win-light $win-shadow;
+  box-shadow: inset 1px 1px 0 $win-dark;
+}
+
+/* Theme Toggle Button (Default Synth mode) */
+.auth-topbar-actions,
+.cal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: #fff;
+  background: rgba(#9d00ff, 0.25);
+  border: 1px solid rgba(#00ffff, 0.45);
+  box-shadow: 0 0 10px rgba(#00ffff, 0.2);
+  transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  .theme-icon {
+    font-size: 1.05rem;
+    line-height: 1;
+    filter: drop-shadow(0 0 4px currentColor);
+  }
+
+  .theme-label {
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  &:hover {
+    background: rgba(#00ffff, 0.2);
+    border-color: #00ffff;
+    color: #fff;
+    box-shadow: 0 0 16px rgba(#00ffff, 0.5);
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+/* =========================================================
+   WINDOWS 95 TASKBAR & START MENU
+   ========================================================= */
+
+.win95-taskbar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 34px;
+  background: $win-grey;
+  border-top: 2px solid $win-light;
+  box-shadow: inset 0 1px 0 #dfdfdf;
+  z-index: 10000;
+  padding: 2px 4px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-family: $win-font;
+  font-size: 12px;
+  color: #000;
+  user-select: none;
+}
+
+.win95-start-btn {
+  @include win-raised;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 2px 6px;
+  font-family: $win-font;
+  font-size: 12px;
+  font-weight: bold;
+  color: #000;
+  cursor: pointer;
+  box-sizing: border-box;
+
+  .win95-flag-icon {
+    font-size: 14px;
+  }
+
+  &:active,
+  &.active {
+    @include win-depressed;
+    padding: 3px 5px 1px 7px;
+  }
+}
+
+.win95-task-items {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.win95-task-item {
+  @include win-depressed;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 8px;
+  max-width: 200px;
+  font-weight: bold;
+  font-size: 12px;
+  color: #000000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: default;
+
+  .win95-task-icon { font-size: 13px; }
+  .win95-task-title { overflow: hidden; text-overflow: ellipsis; }
+}
+
+.win95-systray {
+  @include win-sunken;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 24px;
+  padding: 0 8px;
+  background: $win-grey;
+  font-size: 11px;
+}
+
+.win95-tray-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 12px;
+  color: #000;
+  line-height: 1;
+  &:hover { transform: scale(1.15); }
+}
+
+.win95-clock {
+  font-family: $win-font;
+  font-size: 11px;
+  font-weight: bold;
+  font-variant-numeric: tabular-nums;
+  color: #000000;
+}
+
+/* Start Menu */
+.win95-start-menu {
+  display: none;
+  position: fixed;
+  bottom: 34px;
+  left: 2px;
+  z-index: 10001;
+  @include win-raised;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5), inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 $win-dark;
+  flex-direction: row;
+  min-width: 220px;
+  user-select: none;
+  font-family: $win-font;
+
+  &.open {
+    display: flex;
+  }
+}
+
+.win95-start-banner {
+  background: linear-gradient(180deg, #000080 0%, #1084d0 100%);
+  width: 28px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 8px;
+
+  span {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    color: #ffffff;
+    font-size: 14px;
+    letter-spacing: 2px;
+    font-weight: normal;
+
+    b {
+      font-weight: bold;
+      color: #dfdfdf;
+    }
+  }
+}
+
+.win95-start-items {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 3px;
+  background: $win-grey;
+}
+
+.win95-start-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px 6px 8px;
+  background: transparent;
+  border: none;
+  font-family: $win-font;
+  font-size: 12px;
+  color: #000000;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  box-shadow: none;
+
+  .win95-menu-icon { font-size: 15px; }
+
+  &:hover {
+    background: $win-navy;
+    color: #ffffff;
+    box-shadow: none;
+  }
+}
+
+.win95-menu-divider {
+  height: 1px;
+  background: $win-shadow;
+  border-bottom: 1px solid $win-light;
+  margin: 4px 2px;
+}
+
+/* =========================================================
+   BODY: THEME WINDOWS 95 (AUTHENTIC CURVED CRT SCREEN & HIGH CONTRAST)
+   ========================================================= */
+
+body.theme-win95 {
+  background-color: $win-teal !important;
+  color: #000000 !important;
+  font-family: $win-font !important;
+
+  .win95-taskbar {
+    display: flex;
+  }
+
+  /* CRT Scanlines Overlay (Subtle and non-intrusive) */
+  &::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 10005;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.08) 0px,
+      rgba(0, 0, 0, 0.08) 1px,
+      transparent 1px,
+      transparent 2.5px
+    );
+    opacity: 0.5;
+  }
+
+  /* CRT Barrel Curvature & Vignette - Soft, bright edges without dark corners */
+  &::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 10006;
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse at 50% 50%,
+      transparent 75%,
+      rgba(0, 0, 0, 0.08) 92%,
+      rgba(0, 0, 0, 0.22) 100%
+    );
+    box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.18);
+  }
+
+  /* =========================================================
+     BUKTAD CRT-SKÄRM (#app container)
+     Authentic 1990s Curved Glass Tube with Retro Monitor Bezel
+     ========================================================= */
+  #app {
+    position: relative;
+    max-width: 1040px;
+    margin: 20px auto 55px auto !important;
+    padding: 3px !important;
+    background: $win-grey !important;
+    border: 2px solid #dfdfdf !important;
+    border-radius: 26px / 18px !important;
+    overflow: hidden;
+
+    /* Clean retro CRT monitor bevel with bright soft edges */
+    box-shadow:
+      0 0 0 5px #3a3d46,
+      0 0 0 8px #22242a,
+      0 0 0 12px #484b56,
+      0 12px 28px rgba(0, 0, 0, 0.35),
+      0 0 16px rgba(0, 128, 128, 0.15),
+      /* Soft glass tube depth without heavy dark corners */
+      inset 0 0 10px rgba(0, 0, 0, 0.12),
+      inset 3px 3px 8px rgba(255, 255, 255, 0.18),
+      inset -3px -3px 8px rgba(0, 0, 0, 0.15) !important;
+
+    /* Convex glass specular reflection streak */
+    &::before {
+      content: "";
+      display: block !important;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 38%;
+      border-radius: 26px 26px 70% 70% / 18px 18px 30px 30px;
+      background: linear-gradient(
+        175deg,
+        rgba(255, 255, 255, 0.10) 0%,
+        rgba(255, 255, 255, 0.02) 25%,
+        transparent 55%
+      );
+      pointer-events: none;
+      z-index: 99;
+    }
+
+    &::after {
+      display: none !important;
+    }
+
+    @media (max-width: 767px) {
+      border-radius: 18px / 12px !important;
+      margin: 10px 6px 52px 6px !important;
+      padding: 3px !important;
+      box-shadow:
+        0 0 0 4px #3a3d46,
+        0 0 0 6px #22242a,
+        0 0 0 9px #484b56,
+        0 8px 20px rgba(0, 0, 0, 0.35),
+        inset 0 0 8px rgba(0, 0, 0, 0.1) !important;
+
+      &::before {
+        border-radius: 18px 18px 60% 60% / 12px 12px 20px 20px;
+      }
+    }
+  }
+
+  /* =========================================================
+     WINDOWS 95 LOGIN / AUTH DIALOG WINDOW
+     Authentic Windows 95 Logon Dialog: 3D Bevel, crisp 95 drop-shadow
+     ========================================================= */
+  #app.auth-mode {
+    @include win-raised;
+    max-width: 440px !important;
+    margin: 40px auto 70px auto !important;
+    padding: 3px !important;
+    background: $win-grey !important;
+    border: 2px solid !important;
+    border-color: $win-light $win-shadow $win-shadow $win-light !important;
+    border-radius: 0 !important;
+    box-shadow: 2px 2px 0 $win-dark, 4px 4px 14px rgba(0, 0, 0, 0.35) !important;
+    overflow: visible !important;
+
+    /* Remove CRT TV bezel & reflections from login dialog */
+    &::before, &::after {
+      display: none !important;
+    }
+
+    .auth-topbar {
+      border-radius: 0 !important;
+      padding: 4px 6px !important;
+      margin: 0 0 4px 0 !important;
+
+      .auth-dialog-title {
+        display: inline-flex !important;
+        align-items: center;
+        gap: 6px;
+        font-family: $win-font !important;
+        font-size: 13px !important;
+        font-weight: bold !important;
+        color: #ffffff !important;
+        letter-spacing: 0.5px !important;
+
+        &::before {
+          content: "🔐";
+          font-size: 12px;
+        }
+      }
+    }
+
+    .auth-card {
+      border: none !important;
+      box-shadow: none !important;
+      background: transparent !important;
+      padding: 16px 20px 20px !important;
+      margin: 0 !important;
+      max-width: 100% !important;
+      border-radius: 0 !important;
+
+      &::before, &::after {
+        display: none !important;
+      }
+    }
+
+    .auth-card-glow {
+      display: none !important;
+    }
+
+    @media (max-width: 767px) {
+      max-width: calc(100% - 24px) !important;
+      margin: 20px auto 55px auto !important;
+      border-radius: 0 !important;
+      box-shadow: 2px 2px 0 $win-dark, 3px 3px 10px rgba(0, 0, 0, 0.35) !important;
+
+      &::before { display: none !important; }
+    }
+  }
+
+  /* Titlebars */
+  .cal-header,
+  .auth-topbar {
+    background: linear-gradient(90deg, #000080 0%, #1084d0 100%) !important;
+    color: #ffffff !important;
+    padding: 6px 12px !important;
+    margin: 0 0 4px 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    border-bottom: none !important;
+    border-radius: 30px 30px 0 0 / 18px 18px 0 0 !important;
+
+    @media (max-width: 767px) {
+      border-radius: 16px 16px 0 0 / 10px 10px 0 0 !important;
+      padding: 5px 8px !important;
+    }
+
+    .cal-logo {
+      font-family: $win-font !important;
+      font-size: 13px !important;
+      font-weight: bold !important;
+      letter-spacing: 0.5px !important;
+      color: #ffffff !important;
+      text-shadow: none !important;
+      background: none !important;
+      -webkit-text-fill-color: initial !important;
+
+      &::before {
+        content: "📅 ";
+      }
+    }
+  }
+
+  /* Theme button in Win95 mode */
+  .theme-toggle-btn {
+    @include win-raised;
+    height: 22px;
+    padding: 1px 8px;
+    border-radius: 0;
+    font-family: $win-font;
+    font-size: 11px;
+    font-weight: bold;
+    color: #000000;
+    background: $win-grey;
+    text-transform: none;
+    letter-spacing: 0;
+
+    .theme-icon { font-size: 12px; filter: none; }
+
+    &:hover {
+      background: #e0e0e0;
+      color: #000000;
+      transform: none;
+      box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 $win-dark;
+    }
+
+    &:active {
+      @include win-depressed;
+      padding: 2px 7px 0 9px;
+    }
+  }
+
+  .games-link {
+    @include win-raised;
+    height: 22px;
+    padding: 1px 8px;
+    border-radius: 0;
+    font-family: $win-font;
+    font-size: 11px;
+    font-weight: bold;
+    color: #000000;
+    background: $win-grey;
+    text-transform: none;
+
+    &:hover {
+      background: #e0e0e0;
+      color: #000000;
+      transform: none;
+    }
+    &:active {
+      @include win-depressed;
+    }
+  }
+
+  /* Property Sheet Tabs */
+  .cal-tabs {
+    display: flex;
+    gap: 2px;
+    background: transparent;
+    border: none;
+    padding: 0 4px;
+    margin-bottom: -2px;
+    z-index: 2;
+  }
+
+  .cal-tab {
+    @include win-raised;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    padding: 5px 14px 4px 14px;
+    font-family: $win-font;
+    font-size: 12px;
+    color: #000000;
+    background: #d4d0c8;
+    box-shadow: none;
+
+    svg {
+      width: 14px;
+      height: 14px;
+      color: #000000;
+    }
+
+    &.active {
+      background: $win-grey !important;
+      padding-top: 7px;
+      margin-top: -3px;
+      font-weight: bold;
+      border-bottom: 2px solid $win-grey;
+      z-index: 5;
+      color: #000000 !important;
+    }
+
+    &:hover:not(.active) {
+      background: #e4e0d8;
+      color: #000000;
+    }
+  }
+
+  /* Main Workspace Panels */
+  .cal-panel,
+  .cal-agenda,
+  .modal-content,
+  .month-tile {
+    @include win-raised;
+    background: $win-grey !important;
+    border-radius: 0 !important;
+    padding: 14px !important;
+    color: #000000 !important;
+  }
+
+  .auth-card {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    &::before, &::after { display: none !important; }
+  }
+  .auth-card-glow { display: none !important; }
+
+  /* Standard Windows 95 3D Push Buttons */
+  button,
+  .btn-neon {
+    @include win-raised;
+    font-family: $win-font !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+    letter-spacing: 0.5px !important;
+    text-transform: none !important;
+    color: #000000 !important;
+    height: 28px !important;
+    padding: 2px 16px !important;
+    border-radius: 0 !important;
+    box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 $win-dark !important;
+
+    &::after { display: none !important; }
+
+    &:hover:not(:disabled) {
+      background: $win-grey !important;
+      color: #000000 !important;
+      box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 $win-dark !important;
+      transform: none !important;
+    }
+
+    &:active:not(:disabled) {
+      @include win-depressed;
+      padding: 3px 15px 1px 17px !important;
+      transform: none !important;
+    }
+
+    &:disabled {
+      color: $win-shadow !important;
+      text-shadow: 1px 1px 0 $win-light;
+      cursor: default;
+    }
+
+    svg {
+      color: #000000;
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  .cal-nav-btn {
+    @include win-raised;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 0;
+    color: #000000;
+    font-weight: bold;
+    &:active { @include win-depressed; }
+  }
+
+  .cal-today-btn {
+    @include win-raised;
+    height: 26px;
+    padding: 0 10px;
+    border-radius: 0;
+    font-family: $win-font;
+    font-size: 11px;
+    font-weight: bold;
+    color: #000000;
+    &:active { @include win-depressed; }
+  }
+
+  /* Form Inset Textboxes with Pure Black Text on Pure White Background */
+  input, textarea {
+    @include win-sunken;
+    font-family: $win-font !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    letter-spacing: normal !important;
+    height: 28px !important;
+    padding: 4px 6px !important;
+    border-radius: 0 !important;
+    color: #000000 !important;
+    background: #ffffff !important;
+    caret-color: #000000;
+
+    &::placeholder {
+      color: #777777 !important;
+    }
+
+    &:focus {
+      outline: none !important;
+      border-color: $win-shadow $win-light $win-light $win-shadow !important;
+      box-shadow: inset 1px 1px 0 $win-dark !important;
+      background: #ffffff !important;
+    }
+  }
+
+  /* Form Labels & Field Layout (Clear, readable labels above inputs) */
+  .auth-form {
+    gap: 12px;
+  }
+
+  .auth-field {
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative !important;
+
+    .auth-field-icon {
+      display: none !important;
+    }
+
+    .auth-field-label {
+      display: block !important;
+      position: static !important;
+      transform: none !important;
+      font-size: 12px !important;
+      font-weight: bold !important;
+      color: #000000 !important;
+      margin-bottom: 3px !important;
+      text-transform: none !important;
+      letter-spacing: normal !important;
+      pointer-events: auto !important;
+    }
+
+    input {
+      padding: 4px 6px !important;
+      height: 28px !important;
+    }
+
+    &.has-toggle {
+      input {
+        padding-right: 32px !important;
+      }
+      .auth-field-toggle {
+        color: #000000 !important;
+        right: 4px !important;
+        top: 26px !important;
+        transform: none !important;
+        width: 22px !important;
+        height: 22px !important;
+        padding: 3px !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+
+        svg {
+          width: 16px;
+          height: 16px;
+          color: #000000 !important;
+        }
+      }
+    }
+  }
+
+  .auth-header {
+    margin-bottom: 14px;
+    text-align: left;
+    border-bottom: 1px solid #808080;
+    padding-bottom: 8px;
+
+    .auth-logo {
+      font-family: $win-font !important;
+      font-size: 22px !important;
+      font-weight: bold !important;
+      letter-spacing: 1px !important;
+      color: $win-navy !important;
+      text-shadow: none !important;
+      filter: none !important;
+      padding: 0 !important;
+
+      &::before, &::after { display: none !important; }
+    }
+
+    .auth-subtitle {
+      font-family: $win-font !important;
+      font-size: 11px !important;
+      color: #555555 !important;
+      letter-spacing: normal !important;
+      margin-top: 2px !important;
+      &::after { display: none !important; }
+    }
+
+    .auth-title {
+      font-family: $win-font !important;
+      font-size: 15px !important;
+      font-weight: bold !important;
+      color: $win-navy !important;
+      text-shadow: none !important;
+      text-transform: none !important;
+      letter-spacing: normal !important;
+      margin: 0 0 4px 0 !important;
+    }
+
+    .auth-description {
+      font-size: 12px !important;
+      color: #222222 !important;
+      line-height: 1.4 !important;
+      margin: 0 !important;
+      text-align: left !important;
+      max-width: none !important;
+    }
+  }
+
+  /* High Contrast Links (Classic Windows 95 Hyperlink Blue with underline) */
+  .auth-form .link-btn,
+  .auth-row .link-btn,
+  .link-btn {
+    color: #0000cc !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    text-decoration: underline !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    padding: 2px 0 !important;
+
+    svg { color: #0000cc !important; }
+
+    &:hover {
+      color: #000080 !important;
+      text-decoration: underline !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+    }
+  }
+
+  /* Calendar Grid (Clear White Inset Cells & Crisp Black Dates) */
+  .cal-monthbar {
+    background: #d4d0c8;
+    padding: 6px 10px;
+    border-bottom: 1px solid $win-shadow;
+    margin-bottom: 8px;
+
+    .cal-month-title h2 {
+      font-family: $win-font !important;
+      font-size: 16px !important;
+      font-weight: bold !important;
+      color: #000000 !important;
+      text-shadow: none !important;
+    }
+    .cal-month-title span {
+      font-size: 11px;
+      font-weight: 500;
+      color: #444444 !important;
+    }
+  }
+
+  .cal-weekdays {
+    gap: 2px;
+    margin-bottom: 2px;
+    span {
+      @include win-raised;
+      padding: 3px 0;
+      font-family: $win-font;
+      font-size: 11px;
+      font-weight: bold;
+      color: #000000 !important;
+      text-transform: none;
+      &.weekend { color: #880000 !important; }
+    }
+  }
+
+  .cal-grid {
+    gap: 2px;
+    background: $win-shadow;
+    padding: 2px;
+    @include win-sunken;
+  }
+
+  .cal-day {
+    @include win-raised;
+    background: #ffffff !important;
+    border: 1px solid #c0c0c0;
+    border-radius: 0;
+    padding: 4px;
+    opacity: 1 !important;
+
+    .cal-day-num {
+      font-family: $win-font;
+      font-size: 12px;
+      font-weight: bold;
+      color: #000000 !important;
+      text-shadow: none !important;
+    }
+
+    &.is-past {
+      background: #f7f7f7 !important;
+      .cal-day-num {
+        color: #666666 !important;
+      }
+    }
+
+    &.is-today {
+      border: 2px solid $win-navy !important;
+      background: #e8f0fe !important;
+      box-shadow: inset 0 0 0 1px $win-navy !important;
+      .cal-day-num {
+        color: $win-navy !important;
+        font-weight: bold !important;
+      }
+    }
+
+    &.is-selected {
+      background: $win-navy !important;
+      color: #ffffff !important;
+      border: 1px solid #ffffff !important;
+
+      .cal-day-num {
+        color: #ffffff !important;
+        text-shadow: none !important;
+      }
+
+      .cal-chip {
+        background: #ffffff !important;
+        color: #000000 !important;
+        border-color: #000000 !important;
+        b { color: #000080 !important; }
+      }
+
+      .cal-chip-more {
+        color: #ffffff !important;
+      }
+    }
+
+    .cal-dots i {
+      background: $win-navy !important;
+      border: 1px solid #000000 !important;
+      box-shadow: none !important;
+    }
+    .cal-dots em {
+      color: #000000 !important;
+      font-weight: bold !important;
+    }
+  }
+
+  /* Appointments / Events (High Contrast Black & Navy on Light Background) */
+  .cal-chip {
+    border-radius: 2px;
+    font-family: $win-font;
+    font-size: 11px;
+    background: #f0f0f0 !important;
+    color: #000000 !important;
+    border: 1px solid #808080 !important;
+    border-left: 4px solid $win-navy !important;
+    padding: 2px 4px;
+    margin: 1px 0;
+    box-shadow: none !important;
+
+    b {
+      font-weight: bold !important;
+      color: $win-navy !important;
+    }
+  }
+
+  .cal-chip-more {
+    color: #000000 !important;
+    font-weight: bold !important;
+  }
+
+  .cal-hint {
+    color: #333333 !important;
+    font-weight: 500 !important;
+  }
+
+  /* Next up Bar */
+  .cal-next-up {
+    @include win-sunken;
+    background: #ffffff !important;
+    border-radius: 0;
+    padding: 6px 10px;
+    color: #000000 !important;
+    margin-bottom: 8px;
+
+    .next-up-label {
+      font-family: $win-font;
+      font-size: 11px;
+      font-weight: bold;
+      color: $win-navy !important;
+      text-transform: uppercase;
+    }
+    .next-up-title {
+      font-size: 12px;
+      font-weight: bold;
+      color: #000000 !important;
+    }
+    .next-up-when {
+      font-size: 11px;
+      font-weight: 500;
+      color: #444444 !important;
+    }
+  }
+
+  /* Agenda Section */
+  .cal-agenda {
+    @include win-raised;
+    background: $win-grey !important;
+
+    .cal-agenda-head {
+      border-bottom: 1px solid $win-shadow;
+      padding-bottom: 6px;
+      .cal-agenda-weekday {
+        font-family: $win-font;
+        font-size: 12px;
+        color: $win-navy !important;
+        font-weight: bold;
+      }
+      .cal-agenda-date {
+        font-family: $win-font;
+        font-size: 16px;
+        font-weight: bold;
+        color: #000000 !important;
+      }
+      .cal-agenda-count {
+        @include win-sunken;
+        background: #ffffff !important;
+        color: #000000 !important;
+        font-size: 11px;
+        font-weight: bold;
+        padding: 2px 6px;
+        border-radius: 0;
+      }
+    }
+  }
+
+  .agenda-item {
+    @include win-sunken;
+    border-radius: 0;
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 6px 8px;
+    margin: 4px 0;
+    border-left: 4px solid $win-navy !important;
+
+    .agenda-title {
+      font-size: 12px;
+      font-weight: bold;
+      color: #000000 !important;
+    }
+    .agenda-owner {
+      font-size: 11px;
+      color: #444444 !important;
+      font-weight: 500 !important;
+    }
+    &.mine .agenda-owner {
+      color: $win-navy !important;
+      font-weight: bold !important;
+    }
+    .agenda-time span:first-child {
+      color: $win-navy !important;
+      font-weight: bold !important;
+      font-size: 11px;
+    }
+    .agenda-time span:last-child {
+      color: #555555 !important;
+      font-size: 11px;
+    }
+
+    .agenda-delete {
+      color: #cc0000 !important;
+      svg { color: #cc0000 !important; }
+    }
+  }
+
+  .agenda-empty {
+    background: #ffffff !important;
+    border: 2px dashed #808080 !important;
+    border-radius: 0;
+    color: #000000 !important;
+    p {
+      color: #000000 !important;
+      font-weight: bold !important;
+    }
+    svg {
+      color: $win-navy !important;
+    }
+  }
+
+  /* Booking Modal (Windows 95 Dialog Window) */
+  .modal-overlay {
+    background: rgba(0, 0, 0, 0.45) !important;
+    backdrop-filter: none !important;
+  }
+
+  .modal-content {
+    @include win-raised;
+    background: $win-grey !important;
+    border-radius: 0 !important;
+    box-shadow: 2px 2px 0 $win-dark, 4px 4px 20px rgba(0, 0, 0, 0.5) !important;
+    color: #000000 !important;
+    padding: 16px !important;
+
+    h2 {
+      font-family: $win-font !important;
+      font-size: 15px !important;
+      font-weight: bold !important;
+      color: #000000 !important;
+      text-shadow: none !important;
+      text-align: left !important;
+      margin: 0 !important;
+    }
+
+    p {
+      color: #333333 !important;
+      font-size: 12px !important;
+      margin: 2px 0 0 0 !important;
+      text-align: left !important;
+    }
+
+    .form-group label {
+      color: #000000 !important;
+      font-size: 12px !important;
+      font-weight: bold !important;
+      margin-bottom: 2px !important;
+    }
+
+    .form-group input {
+      background: #ffffff !important;
+      color: #000000 !important;
+      border: 2px solid;
+      border-color: $win-shadow $win-light $win-light $win-shadow !important;
+      border-radius: 0 !important;
+      height: 28px !important;
+    }
+
+    .sheet-head {
+      border-bottom: 1px solid $win-shadow;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+
+    .sheet-date-badge {
+      background: #ffffff !important;
+      border: 2px solid $win-shadow !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      span {
+        background: $win-navy !important;
+        color: #ffffff !important;
+      }
+      strong {
+        color: #000000 !important;
+      }
+    }
+
+    .duration-chips {
+      gap: 4px;
+    }
+
+    .duration-chip {
+      @include win-raised;
+      border-radius: 0 !important;
+      color: #000000 !important;
+      font-size: 11px !important;
+      font-weight: bold !important;
+      height: 26px !important;
+
+      &.active {
+        background: $win-navy !important;
+        color: #ffffff !important;
+        border-color: $win-shadow $win-light $win-light $win-shadow !important;
+      }
+    }
+
+    .taken-slots {
+      background: #ffffff !important;
+      border: 1px solid $win-shadow !important;
+      border-radius: 0 !important;
+      padding: 8px !important;
+
+      .taken-label {
+        color: #880000 !important;
+        font-weight: bold !important;
+        font-size: 11px !important;
+      }
+      .taken-chip {
+        background: #f0f0f0 !important;
+        color: #000000 !important;
+        border: 1px solid #808080 !important;
+        border-left: 3px solid $win-navy !important;
+      }
+    }
+
+    .modal-actions {
+      border-top: 1px solid $win-light;
+      padding-top: 10px;
+      margin-top: 10px;
+
+      button {
+        @include win-raised;
+        height: 28px !important;
+        font-family: $win-font;
+        font-weight: bold;
+        color: #000000;
+        background: $win-grey;
+        padding: 2px 14px;
+        &:hover {
+          background: #d4d0c8;
+        }
+        &:active {
+          @include win-depressed;
+        }
+      }
+      .cancel-btn {
+        @include win-raised;
+        color: #000000 !important;
+        box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 $win-dark !important;
+        &:hover {
+          background: #d4d0c8 !important;
+          color: #000000 !important;
+        }
+      }
+    }
+
+    /* My Bookings Modal (Windows 95 High Contrast) */
+    .my-bookings-list {
+      @include win-sunken;
+      background: #ffffff !important;
+      padding: 8px !important;
+      gap: 12px !important;
+      border: 2px solid;
+      border-color: $win-shadow $win-light $win-light $win-shadow !important;
+      box-shadow: inset 1px 1px 0 $win-dark !important;
+
+      .no-bookings-msg, p {
+        color: #333333 !important;
+        font-family: $win-font !important;
+        font-size: 12px !important;
+        font-style: italic !important;
+        text-align: center !important;
+        margin: 20px 0 !important;
+        text-shadow: none !important;
+      }
+    }
+
+    .booking-section {
+      gap: 6px !important;
+      margin-bottom: 10px !important;
+
+      .section-title {
+        font-family: $win-font !important;
+        font-size: 11px !important;
+        font-weight: bold !important;
+        letter-spacing: 0.5px !important;
+        text-transform: uppercase !important;
+        text-shadow: none !important;
+        padding: 3px 6px !important;
+        margin: 0 0 6px 0 !important;
+        border-bottom: 1px solid #808080 !important;
+
+        &.upcoming {
+          color: #000080 !important;
+          background: #e6edf7 !important;
+          border-left: 3px solid #000080 !important;
+        }
+
+        &.past {
+          color: #444444 !important;
+          background: #eeeeee !important;
+          border-left: 3px solid #808080 !important;
+          opacity: 1 !important;
+        }
+      }
+    }
+
+    .tiny-btn-neon,
+    #delete-all-past {
+      @include win-raised;
+      font-family: $win-font !important;
+      font-size: 11px !important;
+      font-weight: bold !important;
+      color: #000000 !important;
+      background: $win-grey !important;
+      padding: 2px 8px !important;
+      text-transform: none !important;
+      letter-spacing: 0 !important;
+      box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 $win-dark !important;
+      border: 2px solid !important;
+      border-color: $win-light $win-shadow $win-shadow $win-light !important;
+
+      &:hover {
+        background: #d4d0c8 !important;
+        color: #000000 !important;
+        box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 $win-dark !important;
+      }
+
+      &:active {
+        @include win-depressed;
+      }
+    }
+
+    .my-booking-item {
+      background: #f7f7f7 !important;
+      border: 1px solid #c0c0c0 !important;
+      border-left-width: 5px !important;
+      padding: 6px 10px !important;
+      border-radius: 0 !important;
+      box-shadow: 1px 1px 0 #dfdfdf !important;
+      margin-bottom: 5px !important;
+      transition: none !important;
+
+      &:hover {
+        background: #eaf1fb !important;
+        border-color: #000080 !important;
+        box-shadow: 1px 1px 0 #000000 !important;
+      }
+
+      .booking-section:has(.past) & {
+        opacity: 0.85 !important;
+        filter: none !important;
+        background: #f0f0f0 !important;
+      }
+
+      .my-booking-info {
+        flex: 1;
+      }
+
+      .my-booking-title {
+        font-family: $win-font !important;
+        color: #000000 !important;
+        font-size: 13px !important;
+        font-weight: bold !important;
+        text-shadow: none !important;
+        margin-bottom: 2px !important;
+      }
+
+      .my-booking-time {
+        font-family: $win-font !important;
+        color: #333333 !important;
+        font-size: 11px !important;
+        font-weight: 500 !important;
+        text-shadow: none !important;
+      }
+
+      .delete-my-booking {
+        @include win-raised;
+        width: 22px !important;
+        height: 22px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 14px !important;
+        font-weight: bold !important;
+        color: #880000 !important;
+        background: $win-grey !important;
+        cursor: pointer !important;
+        padding: 0 !important;
+        line-height: 1 !important;
+        box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 $win-dark !important;
+        border: 2px solid !important;
+        border-color: $win-light $win-shadow $win-shadow $win-light !important;
+
+        &:hover {
+          background: #ffcccc !important;
+          color: #cc0000 !important;
+        }
+
+        &:active {
+          @include win-depressed;
+        }
+      }
+    }
+  }
+
+  /* Year Overview Grid */
+  .month-tile {
+    @include win-raised;
+    background: $win-grey !important;
+    border-radius: 0 !important;
+    padding: 4px !important;
+
+    .month-tile-header {
+      background: $win-navy !important;
+      color: #ffffff !important;
+      font-weight: bold !important;
+      padding: 2px 4px !important;
+      font-size: 11px !important;
+      margin-bottom: 2px !important;
+    }
+
+    .mini-day-header {
+      color: #000000 !important;
+      font-weight: bold !important;
+      font-size: 10px !important;
+    }
+
+    .mini-day {
+      background: #ffffff !important;
+      color: #000000 !important;
+      border: 1px solid #c0c0c0 !important;
+      font-weight: 500 !important;
+      font-size: 11px !important;
+
+      &.has-events {
+        background: #d4e6f1 !important;
+        color: #000080 !important;
+        font-weight: bold !important;
+      }
+    }
+  }
+
+  /* User Dropdown Menu */
+  .user-dropdown {
+    @include win-raised;
+    background: $win-grey !important;
+    border-radius: 0 !important;
+    box-shadow: 2px 2px 0 $win-dark !important;
+    padding: 2px !important;
+
+    .user-dropdown-email {
+      color: #000000 !important;
+      font-size: 11px !important;
+      font-weight: bold !important;
+      border-bottom: 1px solid $win-shadow !important;
+      padding: 4px 6px !important;
+    }
+
+    .user-dropdown-item {
+      color: #000000 !important;
+      font-size: 12px !important;
+      border-radius: 0 !important;
+      padding: 4px 8px !important;
+
+      svg { color: #000000 !important; }
+
+      &:hover {
+        background: $win-navy !important;
+        color: #ffffff !important;
+        svg { color: #ffffff !important; }
+      }
+    }
+  }
+
+  .user-avatar {
+    @include win-raised;
+    border-radius: 0 !important;
+    color: #000000 !important;
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+    border: 2px solid !important;
+    border-color: $win-light $win-shadow $win-shadow $win-light !important;
+    box-shadow: none !important;
+    &:active { @include win-depressed; }
+  }
+
+  /* Games / Arcade in Windows 95 Explorer Folder Style */
+  .arcade-hero {
+    @include win-sunken;
+    background: #ffffff !important;
+    border-radius: 0;
+    height: auto !important;
+    padding: 16px !important;
+    margin-bottom: 12px;
+
+    .arcade-hero-sun,
+    .arcade-hero-grid { display: none !important; }
+
+    .arcade-hero-content {
+      margin: 0 !important;
+      text-align: left;
+    }
+
+    .arcade-kicker {
+      font-family: $win-font !important;
+      font-size: 11px !important;
+      color: #555555 !important;
+      text-shadow: none !important;
+      letter-spacing: normal !important;
+    }
+
+    .arcade-title {
+      font-family: $win-font !important;
+      font-size: 20px !important;
+      font-weight: bold !important;
+      color: #000000 !important;
+      text-shadow: none !important;
+      font-style: normal !important;
+      letter-spacing: normal !important;
+      margin: 2px 0 !important;
+    }
+
+    .arcade-sub {
+      font-family: $win-font !important;
+      font-size: 12px !important;
+      color: #333333 !important;
+      text-shadow: none !important;
+    }
+  }
+
+  .arcade-grid {
+    gap: 12px;
+  }
+
+  .arcade-card {
+    @include win-raised;
+    background: $win-grey !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    transform: none !important;
+    color: #000000 !important;
+
+    .arcade-card-art {
+      height: 70px !important;
+      background: #ffffff !important;
+      border-bottom: 1px solid $win-shadow;
+
+      .arcade-card-sun,
+      .arcade-card-floor { display: none; }
+
+      .arcade-card-icon {
+        font-size: 2.5rem;
+        filter: none;
+        animation: none;
+      }
+    }
+
+    .arcade-card-title {
+      font-family: $win-font;
+      font-size: 14px;
+      font-weight: bold;
+      color: $win-navy !important;
+      text-shadow: none !important;
+      letter-spacing: normal !important;
+    }
+
+    .arcade-card-tagline {
+      font-size: 12px !important;
+      color: #222222 !important;
+    }
+
+    .arcade-card-play {
+      @include win-raised;
+      border-radius: 0 !important;
+      color: #000000 !important;
+      font-size: 11px !important;
+      font-weight: bold !important;
+      height: 24px !important;
+      padding: 0 10px !important;
+    }
+
+    &:hover {
+      box-shadow: none !important;
+      border-color: $win-light $win-shadow $win-shadow $win-light !important;
+      .arcade-card-play {
+        background: #e6e6e6 !important;
+        color: #000000 !important;
+      }
+    }
+  }
+}
+
+/* =========================================================
+   WINDOWS 95 BOOT SCREEN SPLASH (AUTHENTIC 1995 STARTUP)
+   ========================================================= */
+
+html[data-theme="win95"],
+body.theme-win95 {
+  #splash-screen {
+    background:
+      radial-gradient(circle at 20% 40%, rgba(255, 255, 255, 0.45) 0%, transparent 40%),
+      radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.65) 0%, transparent 45%),
+      radial-gradient(circle at 80% 35%, rgba(255, 255, 255, 0.45) 0%, transparent 40%),
+      radial-gradient(circle at 35% 55%, rgba(255, 255, 255, 0.55) 0%, transparent 50%),
+      radial-gradient(circle at 65% 50%, rgba(255, 255, 255, 0.6) 0%, transparent 45%),
+      linear-gradient(180deg, #1b62b7 0%, #4a94e8 38%, #c6e0f8 68%, #ffffff 88%, #d8d8d8 100%) !important;
+    color: #000000;
+    font-family: $win-font;
+    overflow: hidden;
+
+    .synth-splash {
+      display: none !important;
+    }
+
+    .win95-boot-splash {
+      display: flex !important;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    /* CRT Scanlines across the boot screen */
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.12) 0px,
+        rgba(0, 0, 0, 0.12) 1px,
+        transparent 1px,
+        transparent 2.5px
+      );
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* Center Windows 95 Logo block */
+    .win95-boot-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      z-index: 2;
+      padding: 20px;
+      margin-bottom: 50px;
+
+      @media (max-width: 500px) {
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
+
+    /* Waving 4-color Flag in perspective */
+    .win95-boot-flag-logo {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      transform: rotate(-8deg) skewX(-10deg);
+      filter: drop-shadow(-8px 6px 0 rgba(0, 0, 0, 0.65));
+
+      .flag-matrix {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 4px;
+        width: 100%;
+        height: 100%;
+
+        .flag-tile {
+          border-radius: 2px;
+          box-shadow: inset 2px 2px 2px rgba(255, 255, 255, 0.5), inset -2px -2px 2px rgba(0, 0, 0, 0.3);
+
+          &.red { background: #e73827; }
+          &.green { background: #4eb334; }
+          &.blue { background: #0084ff; }
+          &.yellow { background: #ffb400; }
+        }
+      }
+    }
+
+    /* Typography */
+    .win95-boot-brand {
+      text-align: left;
+      user-select: none;
+
+      @media (max-width: 500px) {
+        text-align: center;
+      }
+
+      .win95-boot-sub {
+        font-family: 'Times New Roman', Georgia, serif;
+        font-size: 1.15rem;
+        font-style: italic;
+        color: #1a1a1a;
+        line-height: 1;
+        margin-bottom: 2px;
+        text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.8);
+      }
+
+      .win95-boot-title {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: #000000;
+        letter-spacing: -1.5px;
+        line-height: 0.95;
+        text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.9);
+
+        .win95-boot-95 {
+          font-weight: 900;
+          color: #ffffff;
+          margin-left: 4px;
+          text-shadow:
+            2px 2px 0 #000000,
+            -1px -1px 0 #000000,
+            1px -1px 0 #000000,
+            -1px 1px 0 #000000,
+            0 2px 0 #000000,
+            2px 0 0 #000000;
+        }
+      }
+
+      .win95-boot-edition {
+        font-family: $win-font;
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 3.5px;
+        color: #000080;
+        margin-top: 6px;
+        text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.9);
+      }
+    }
+
+    /* Bottom Status & Animated Scrolling Gradient Marquee */
+    .win95-boot-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 38px;
+      background: #000000;
+      border-top: 2px solid #808080;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 6;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8);
+
+      .win95-boot-bar {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        overflow: hidden;
+        pointer-events: none;
+
+        .win95-boot-scroller {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          width: 140px;
+          background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(0, 100, 255, 0.3) 25%,
+            #00ffff 50%,
+            rgba(0, 100, 255, 0.3) 75%,
+            transparent 100%
+          );
+          animation: win95-marquee 1.8s infinite linear;
+        }
+      }
+
+      .win95-boot-status {
+        position: relative;
+        z-index: 2;
+        font-family: 'Share Tech Mono', 'Courier New', monospace;
+        font-size: 12px;
+        letter-spacing: 1px;
+        color: #ffffff;
+        text-shadow: 0 0 4px #00ffff;
+      }
+    }
+  }
+}
+
+@keyframes win95-marquee {
+  0% { left: -140px; }
+  100% { left: 100%; }
+}

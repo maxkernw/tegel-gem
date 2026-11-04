@@ -90,6 +90,10 @@ body {
     width: 300px;
   }
 
+  .win95-boot-splash {
+    display: none;
+  }
+
   .splash-logo {
     font-size: 4rem;
     font-weight: 900;
@@ -350,6 +354,10 @@ button {
 }
 
 /* ===================== Auth Views ===================== */
+.auth-dialog-title {
+  display: none;
+}
+
 .auth-card {
   position: relative;
   max-width: 420px;
@@ -1974,6 +1982,13 @@ button {
   flex-direction: column;
   gap: 20px; /* Increased gap between sections */
   margin-bottom: 10px;
+
+  .no-bookings-msg {
+    text-align: center;
+    color: $neon-pink;
+    font-size: 0.95rem;
+    margin: 15px 0;
+  }
 }
 
 .booking-section {
